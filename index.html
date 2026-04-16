@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Habit Tracker Pro - Light Theme</title>
+    <title>Habit Tracker Pro - Eye Comfort Theme</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root {
-            /* Light and Soft Color Palette */
-            --bg: #f9fbfd;
-            --primary: #8faadc; /* Soft Pastel Blue */
-            --secondary: #f0a8a8; /* Soft Peach/Pink */
-            --card: #ffffff;
-            --text: #475569; /* Softer Dark Gray */
-            --border: #e2e8f0;
+            /* Eye-Soothing Global Palette */
+            --bg: #eef0f2; /* Light Grey for background (reduces eye strain) */
+            --card: #fcfcfc; /* Off-white/Creamy base for cards */
+            --primary: #94b4c4; /* Muted Powder Blue */
+            --secondary: #e2b4aa; /* Muted Soft Peach */
+            --text: #545b66; /* Softened dark grey for readability */
+            --border: #dce1e6; /* Soft grey border */
         }
 
         body {
@@ -37,7 +37,7 @@
             background: var(--card);
             border-radius: 24px;
             padding: 20px;
-            box-shadow: 0 4px 20px rgba(143, 170, 220, 0.08); /* Softer shadow */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03); /* Extremely soft shadow */
             border: 1px solid var(--border);
         }
 
@@ -68,7 +68,7 @@
             stroke-linecap: round;
         }
 
-        .bg-circle { stroke: #f1f5f9; }
+        .bg-circle { stroke: #eaedf0; }
         .fg-circle {
             stroke: var(--secondary);
             transition: stroke-dashoffset 0.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -83,7 +83,7 @@
         }
 
         .perc-val { font-size: 24px; font-weight: 800; display: block; color: var(--primary); }
-        .perc-label { font-size: 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; }
+        .perc-label { font-size: 10px; color: #8a94a6; text-transform: uppercase; letter-spacing: 1px; }
 
         .header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
         
@@ -92,41 +92,41 @@
             border-radius: 12px; 
             border: 1px solid var(--border); 
             font-weight: 600; 
-            background: #fff;
+            background: var(--card);
             color: var(--text);
             outline: none;
         }
         
         .table-wrapper { width: 100%; overflow-x: auto; border-radius: 15px; margin-top: 15px; border: 1px solid var(--border); }
-        table { border-collapse: collapse; min-width: 1000px; width: 100%; background: white; }
-        th, td { border: 1px solid #f1f5f9; padding: 12px 5px; text-align: center; }
+        table { border-collapse: collapse; min-width: 1000px; width: 100%; background: var(--card); }
+        th, td { border: 1px solid #eaedf0; padding: 12px 5px; text-align: center; }
 
         .habit-name-cell {
-            position: sticky; left: 0; background: white; z-index: 5;
+            position: sticky; left: 0; z-index: 5;
             min-width: 160px; text-align: left; padding-left: 15px; font-weight: 600;
-            border-right: 2px solid #f1f5f9;
-            color: var(--primary);
+            border-right: 2px solid #eaedf0;
+            transition: all 0.3s ease;
         }
 
-        .day-label { font-size: 11px; font-weight: bold; color: #94a3b8; background: #f8fafc; }
+        .day-label { font-size: 11px; font-weight: bold; color: #8a94a6; background: #f6f8fa; }
         
-        /* Today's Highlight */
+        /* Today's Highlight - Super subtle */
         .today-highlight { 
-            background-color: #fdf5f5 !important; 
-            box-shadow: inset 0 0 0 2px var(--secondary);
+            background-color: #fdfaf8 !important; 
+            box-shadow: inset 0 0 0 1.5px var(--secondary);
         }
 
         .btn-add { background: var(--primary); color: white; border: none; padding: 12px 25px; border-radius: 12px; cursor: pointer; font-weight: bold; transition: opacity 0.2s; }
-        .btn-add:hover { opacity: 0.9; }
+        .btn-add:hover { opacity: 0.85; }
 
         .input-group { display: flex; gap: 10px; margin-bottom: 20px; }
-        input[type="text"] { flex: 1; padding: 12px; border: 1px solid var(--border); border-radius: 12px; outline: none; color: var(--text); }
-        input[type="text"]::placeholder { color: #cbd5e1; }
+        input[type="text"] { flex: 1; padding: 12px; border: 1px solid var(--border); border-radius: 12px; outline: none; color: var(--text); background: var(--card); }
+        input[type="text"]::placeholder { color: #aeb6c1; }
 
-        .delete-btn { color: #cbd5e1; border: none; background: none; cursor: pointer; margin-left: 8px; font-size: 12px; }
-        .delete-btn:hover { color: #f0a8a8; }
+        .delete-btn { border: none; background: none; cursor: pointer; float: right; margin-right: 5px; font-size: 14px; opacity: 0.4; transition: 0.2s; }
+        .delete-btn:hover { opacity: 1; color: #d98282; }
         
-        input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--secondary); cursor: pointer; }
+        input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; }
 
         @media (max-width: 600px) {
             .stats-grid { grid-template-columns: 1fr; }
@@ -137,7 +137,7 @@
 
 <div class="container">
     <div class="card header">
-        <h2 style="margin:0; color: var(--primary); font-size: 20px;">Master Habit Tracker 🚀</h2>
+        <h2 style="margin:0; color: var(--text); font-size: 20px;">Master Habit Tracker 🚀</h2>
         <select id="monthSelect" onchange="changeMonth()">
             <option>January</option><option>February</option><option>March</option>
             <option>April</option><option>May</option><option>June</option>
@@ -148,7 +148,7 @@
 
     <div class="stats-grid">
         <div class="card stat-card">
-            <h4 style="margin:0 0 12px 0; font-size: 14px; color: #94a3b8;">Today's Progress</h4>
+            <h4 style="margin:0 0 12px 0; font-size: 14px; color: #8a94a6;">Today's Progress</h4>
             <div class="progress-ring">
                 <svg width="140" height="140">
                     <circle class="bg-circle" cx="70" cy="70" r="60"></circle>
@@ -167,18 +167,18 @@
 
     <div class="card">
         <div class="input-group">
-            <input type="text" id="habitInput" placeholder="Enter new habit...">
+            <input type="text" id="habitInput" placeholder="Add a new habit...">
             <button class="btn-add" onclick="addHabit()">Add Habit</button>
         </div>
         <div class="table-wrapper">
             <table>
                 <thead>
                     <tr>
-                        <th class="habit-name-cell" rowspan="2">Habits</th>
-                        <th colspan="7" style="color:#d1879c; background:#fdf2f5;">Week 1</th>
-                        <th colspan="7" style="color:#8faadc; background:#f4f7fc;">Week 2</th>
-                        <th colspan="7" style="color:#8db596; background:#f2f9f4;">Week 3</th>
-                        <th colspan="7" style="color:#dcb07a; background:#fdf9f2;">Week 4</th>
+                        <th class="habit-name-cell" rowspan="2" style="background: var(--card);">Habits</th>
+                        <th colspan="7" style="color:#a66851; background:#fdf5f2;">Week 1</th>
+                        <th colspan="7" style="color:#4a7c9d; background:#f2f8fc;">Week 2</th>
+                        <th colspan="7" style="color:#3e7a5e; background:#f1f8f4;">Week 3</th>
+                        <th colspan="7" style="color:#745a96; background:#f7f4f9;">Week 4</th>
                     </tr>
                     <tr id="dayLabelsRow"></tr>
                 </thead>
@@ -194,6 +194,17 @@
     let currentMonth = "";
     let allData = JSON.parse(localStorage.getItem('HabitMaster_V1')) || {};
     let myChart;
+
+    // The user's exact requested soft, muted, and eye-comforting colors
+    const habitColors = [
+        { name: 'Pastel Green', bg: '#f1f8f4', accent: '#a3d9b1', text: '#3e7a5e' },
+        { name: 'Sage Green',   bg: '#f4f5f2', accent: '#b0bba3', text: '#556044' },
+        { name: 'Light Blue',   bg: '#f2f8fc', accent: '#a6cce3', text: '#4a7c9d' },
+        { name: 'Lavender',     bg: '#f7f4f9', accent: '#cbbfe3', text: '#745a96' },
+        { name: 'Beige / Cream',bg: '#fbf9f6', accent: '#dcd3c6', text: '#8b7c69' },
+        { name: 'Powder Blue',  bg: '#f4f6fb', accent: '#b4c4e4', text: '#5c729c' },
+        { name: 'Soft Peach',   bg: '#fdf5f2', accent: '#f5c6b6', text: '#a66851' }
+    ];
 
     function init() {
         const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
@@ -232,9 +243,9 @@
                 datasets: [{
                     label: 'Success Rate %',
                     data: [0, 0, 0, 0],
-                    borderColor: '#8faadc', // Matched to new primary color
+                    borderColor: '#94b4c4', // Muted Powder Blue
                     fill: true,
-                    backgroundColor: 'rgba(143, 170, 220, 0.15)', // Light fill
+                    backgroundColor: 'rgba(148, 180, 196, 0.15)', // Light fill
                     tension: 0.4
                 }]
             },
@@ -255,10 +266,20 @@
         const todayIdx = getTodayIdx();
 
         habits.forEach((h, hIdx) => {
-            let row = `<tr><td class="habit-name-cell">${h.name} <button class="delete-btn" onclick="deleteHabit(${hIdx})">✕</button></td>`;
+            // Apply the eye-soothing theme in order
+            const theme = habitColors[hIdx % habitColors.length];
+            
+            let row = `<tr>
+                <td class="habit-name-cell" style="background-color: ${theme.bg}; color: ${theme.text}; border-left: 4px solid ${theme.accent};">
+                    ${h.name} 
+                    <button class="delete-btn" style="color: ${theme.accent};" onclick="deleteHabit(${hIdx})">✕</button>
+                </td>`;
+                
             for(let d=0; d<28; d++) {
                 let highlight = (d === todayIdx) ? 'today-highlight' : '';
-                row += `<td class="${highlight}"><input type="checkbox" ${h.days[d]?'checked':''} onclick="toggleDay(${hIdx},${d})"></td>`;
+                row += `<td class="${highlight}">
+                    <input type="checkbox" style="accent-color: ${theme.accent};" ${h.days[d]?'checked':''} onclick="toggleDay(${hIdx},${d})">
+                </td>`;
             }
             row += `</tr>`;
             body.innerHTML += row;
@@ -308,7 +329,13 @@
     function toggleDay(hIdx, dIdx) {
         allData[currentMonth][hIdx].days[dIdx] = !allData[currentMonth][hIdx].days[dIdx];
         if(allData[currentMonth][hIdx].days[dIdx]) {
-            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+            // Updated confetti colors to match the gentle theme
+            confetti({ 
+                particleCount: 80, 
+                spread: 70, 
+                origin: { y: 0.6 },
+                colors: ['#a3d9b1', '#a6cce3', '#cbbfe3', '#f5c6b6', '#dcd3c6']
+            });
             document.getElementById('clickSound').play().catch(()=>{});
         }
         updateUI();
