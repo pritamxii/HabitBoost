@@ -8,20 +8,20 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root {
-            --bg: #F9FBFC; 
+            --bg: #F8F9FA; 
             --card: #FFFFFF;
             --primary: #B2AC88; 
-            --text: #4A4A4A;
-            --today-highlight: #FFF4E6; 
+            --text: #2D3436;
+            --today-highlight: #FFDAB9; 
             --pastel-purple-low: rgba(179, 157, 219, 0.4); 
         }
 
-        /* Color Palette for Habits */
-        .habit-row-0 { --row-color: #E8F5E9; --text-color: #2E7D32; --accent-color: #81C784; } /* Green */
-        .habit-row-1 { --row-color: #F1F3E9; --text-color: #556B2F; --accent-color: #A3AD85; } /* Sage */
-        .habit-row-2 { --row-color: #E3F2FD; --text-color: #1565C0; --accent-color: #90CAF9; } /* Blue */
-        .habit-row-3 { --row-color: #F3E5F5; --text-color: #6A1B9A; --accent-color: #CE93D8; } /* Purple */
-        .habit-row-4 { --row-color: #FAF3E0; --text-color: #8D6E63; --accent-color: #D7CCC8; } /* Tan */
+        /* Colorful Row Themes from Images */
+        .habit-row-0 { --row-bg: #E8F5E9; --row-accent: #81C784; --row-text: #2E7D32; } /* Green */
+        .habit-row-1 { --row-bg: #F1F3E9; --row-accent: #A3AD85; --row-text: #556B2F; } /* Sage */
+        .habit-row-2 { --row-bg: #E3F2FD; --row-accent: #90CAF9; --row-text: #1565C0; } /* Blue */
+        .habit-row-3 { --row-bg: #F3E5F5; --row-accent: #CE93D8; --row-text: #6A1B9A; } /* Purple */
+        .habit-row-4 { --row-bg: #FAF3E0; --row-accent: #D7CCC8; --row-text: #8D6E63; } /* Tan */
 
         body {
             font-family: 'Inter', -apple-system, sans-serif;
@@ -38,85 +38,75 @@
 
         .card { 
             background: var(--card); border-radius: 20px; padding: 20px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03); text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: center;
         }
 
-        .progress-card { background: white; padding: 25px 15px; border-radius: 24px; }
-        .progress-title { font-size: 16px; font-weight: 700; color: #636E72; }
-        .perc-val { font-size: 60px; font-weight: 800; color: #D1C4E9; line-height: 1.2; }
-        .date-display { font-size: 14px; color: #B2BEC3; font-weight: 500; }
+        .progress-card { background: white; padding: 25px 15px; border-radius: 24px; margin-bottom: 10px; }
+        .progress-title { font-size: 18px; font-weight: 700; color: #2D3436; margin-bottom: 15px; }
+        .perc-val { font-size: 68px; font-weight: 800; color: #D1C4E9; line-height: 1; margin: 10px 0; }
+        .date-display { font-size: 14px; color: #636E72; margin-top: 10px; font-weight: 500; }
 
-        .header-section { display: flex; justify-content: space-between; align-items: center; text-align: left; }
-        h3 { margin: 0; color: var(--primary); font-size: 18px; letter-spacing: 0.5px; }
+        .header-section { display: flex; justify-content: space-between; align-items: center; text-align: left; flex-wrap: wrap; gap: 10px; }
+        h3 { margin: 0; color: var(--primary); font-size: 20px; }
 
         select { 
             padding: 8px 12px; border-radius: 12px; border: 1px solid #EEE; 
-            background: white; font-weight: 600; color: var(--text); outline: none;
+            background: white; font-weight: 600; color: var(--text);
         }
 
         .stats-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
-        @media (min-width: 768px) { .stats-grid { grid-template-columns: 320px 1fr; } }
+        @media (min-width: 768px) { .stats-grid { grid-template-columns: 350px 1fr; } }
 
-        .chart-container { height: 240px; padding: 15px; background: white; border-radius: 24px; }
+        .chart-container { height: 250px; padding: 15px; background: white; border-radius: 24px; display: flex; align-items: center; }
 
         .table-wrapper {
-            width: 100%; overflow-x: auto; border-radius: 20px; 
-            background: white; -webkit-overflow-scrolling: touch;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.02);
+            width: 100%; overflow-x: auto; border: 1px solid #EEE; 
+            border-radius: 20px; background: white; -webkit-overflow-scrolling: touch;
         }
 
-        table { border-collapse: collapse; min-width: 1000px; width: 100%; border-radius: 20px; }
-        th { padding: 12px 5px; text-align: center; }
-        
-        .week-header { font-size: 11px; font-weight: 800; color: #8D6E63; background: #FFF4F0; text-transform: uppercase; }
-        .day-label { font-size: 10px; color: #B2BEC3; border-bottom: 1px solid #F1F1F1; }
-        .date-label { font-size: 12px; font-weight: 800; padding-bottom: 10px; }
+        table { border-collapse: collapse; min-width: 1000px; width: 100%; }
+        th, td { border: 1px solid #F8F8F8; padding: 12px 5px; text-align: center; }
+
+        .week-header { background: #FFF4F0; font-size: 11px; font-weight: 800; color: #8D6E63; }
+        .day-label { font-size: 10px; color: #BBB; background: #FBFCFB; }
+        .date-label { font-size: 12px; font-weight: bold; }
 
         .habit-name-cell {
             position: sticky; left: 0; z-index: 10;
-            min-width: 180px; text-align: left; padding: 15px 20px;
-            font-weight: 700; border-right: 1px solid rgba(0,0,0,0.05);
-            background-color: var(--row-color);
-            color: var(--text-color);
-            border-left: 5px solid var(--accent-color);
+            min-width: 180px; text-align: left; padding-left: 15px;
+            font-weight: 700; border-right: 3px solid var(--accent);
+            background-color: var(--row-bg) !important;
+            color: var(--row-text);
+            border-left: 5px solid var(--row-accent);
         }
 
-        .day-cell { 
-            padding: 10px 5px; 
-            background-color: #FFF;
-            transition: 0.2s;
-        }
-
-        /* The colored background for checked days */
-        .day-cell.checked { background-color: var(--row-color); }
-
-        .streak-badge {
-            font-size: 9px; background: white; color: #FF7675;
-            padding: 2px 6px; border-radius: 10px; margin-left: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-
-        .today-col { background-color: var(--today-highlight) !important; outline: 1px solid #FFE0B2; }
-
+        /* Checkbox styling to match colorful rows */
+        .day-cell { transition: background 0.3s; }
+        .day-cell.checked { background-color: var(--row-bg); }
+        
         input[type="checkbox"] { 
             width: 22px; height: 22px; 
-            accent-color: var(--accent-color); 
+            accent-color: var(--row-accent); 
             cursor: pointer; 
-            border-radius: 6px;
         }
 
-        .delete-btn { color: rgba(0,0,0,0.1); border: none; background: none; font-size: 16px; cursor: pointer; float: right; transition: 0.2s; }
-        .delete-btn:hover { color: #FF7675; }
+        .streak-badge {
+            font-size: 10px; background: white; color: #FF4D4D;
+            padding: 2px 6px; border-radius: 8px; margin-left: 5px; border: 1px solid #FFE0E0;
+        }
 
-        .backup-controls { display: flex; justify-content: center; gap: 10px; margin-top: 10px; padding-bottom: 30px; }
+        .today-col { background-color: var(--today-highlight) !important; border-radius: 5px; }
+        .delete-btn { color: #BBB; border: none; background: none; font-size: 14px; cursor: pointer; float: right; padding: 0 5px; }
+
+        .backup-controls { display: flex; justify-content: center; gap: 10px; margin-top: 5px; padding-bottom: 20px; }
         .btn-easy { 
-            font-size: 11px; padding: 10px 15px; border-radius: 12px; border: 1px solid #EEE; 
-            background: white; color: #95A5A6; font-weight: bold; cursor: pointer;
+            font-size: 11px; padding: 10px 15px; border-radius: 12px; border: 1px solid #DDD; 
+            background: #fdfdfd; color: #555; font-weight: bold; cursor: pointer;
         }
 
         .developed-by {
             text-align: center; padding: 25px; color: var(--pastel-purple-low);
-            font-weight: 800; font-size: 12px; letter-spacing: 2px; text-transform: uppercase;
+            font-weight: 700; font-size: 14px; letter-spacing: 1px; text-transform: uppercase;
         }
     </style>
 </head>
@@ -147,7 +137,7 @@
 
     <div class="card" style="padding: 10px 15px;">
         <div style="display:flex; gap:10px;">
-            <input type="text" id="habitInput" style="flex:1; padding:12px; border:1px solid #F1F1F1; border-radius:15px; outline:none;" placeholder="What's your goal today?">
+            <input type="text" id="habitInput" style="flex:1; padding:12px; border:1px solid #EEE; border-radius:15px; outline:none;" placeholder="Add new habit...">
             <button onclick="addHabit()" style="background:var(--primary); color:white; border:none; padding:0 20px; border-radius:15px; font-weight:bold; cursor:pointer;">+ Add</button>
         </div>
     </div>
@@ -164,8 +154,8 @@
     </div>
 
     <div class="backup-controls">
-        <button class="btn-easy" onclick="copyDataToClipboard()">💾 Export Data</button>
-        <button class="btn-easy" onclick="pasteDataToRestore()">📂 Import Data</button>
+        <button class="btn-easy" onclick="copyDataToClipboard()">💾 Export Data Code</button>
+        <button class="btn-easy" onclick="pasteDataToRestore()">📂 Paste to Restore</button>
     </div>
 
     <div class="developed-by">
@@ -176,7 +166,7 @@
 <script>
     let currentMonth = "";
     const monthsArr = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-    const dayNames = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+    const dayNames = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
     let allData = JSON.parse(localStorage.getItem('HabitPro_Pritam_Final')) || {};
     let myChart;
 
@@ -184,7 +174,12 @@
         const d = new Date();
         currentMonth = monthsArr[d.getMonth()];
         document.getElementById('monthSelect').value = currentMonth;
-        document.getElementById('fullDateDisplay').innerText = `${d.toDateString()}`;
+        
+        const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        const dayName = days[d.getDay()];
+        const dayNum = d.getDate();
+        document.getElementById('fullDateDisplay').innerText = `${dayName} ${currentMonth.substring(0,3)} ${dayNum} 2026`;
+
         initChart();
         updateUI();
     }
@@ -193,13 +188,13 @@
         const ctx = document.getElementById('habitChart').getContext('2d');
         myChart = new Chart(ctx, {
             type: 'bar',
-            data: { labels: [], datasets: [{ data: [], backgroundColor: '#D1C4E9', borderRadius: 10 }] },
+            data: { labels: [], datasets: [{ data: [], backgroundColor: '#B0C4DE', borderRadius: 8 }] },
             options: {
                 responsive: true, maintainAspectRatio: false,
                 plugins: { legend: { display: false } },
                 scales: { 
-                    y: { display: false },
-                    x: { grid: { display: false }, ticks: { font: { size: 9 }, color: '#BDC3C7' } }
+                    y: { beginAtZero: true, max: 100, ticks: { stepSize: 25 }, grid: { color: '#F0F0F0' } },
+                    x: { grid: { display: false }, ticks: { font: { size: 9 } } }
                 }
             }
         });
@@ -225,20 +220,17 @@
 
         habits.forEach((h, hIdx) => {
             const streak = calculateStreak(h.days);
-            const colorClass = `habit-row-${hIdx % 5}`; // Cycle through the 5 colors
+            const rowTheme = `habit-row-${hIdx % 5}`; // Rotates through 5 colors
             
-            let row = `<tr class="${colorClass}"><td class="habit-name-cell">
+            let row = `<tr class="${rowTheme}"><td class="habit-name-cell">
                         ${h.name} 
                         ${streak > 1 ? `<span class="streak-badge">🔥 ${streak}</span>` : ''}
                         <button class="delete-btn" onclick="deleteHabit(${hIdx})">×</button>
                       </td>`;
-            
             for(let d=0; d<totalDays; d++) {
                 const isToday = (isCurrentMonth && (d+1) === today) ? 'today-col' : '';
                 const isChecked = h.days[d] ? 'checked' : '';
-                row += `<td class="day-cell ${isToday} ${isChecked}">
-                            <input type="checkbox" ${h.days[d]?'checked':''} onclick="toggleDay(${hIdx},${d})">
-                        </td>`;
+                row += `<td class="day-cell ${isToday} ${isChecked}"><input type="checkbox" ${h.days[d]?'checked':''} onclick="toggleDay(${hIdx},${d})"></td>`;
             }
             body.innerHTML += row + `</tr>`;
         });
@@ -255,9 +247,9 @@
 
     function renderHeader() {
         const totalDays = getDaysInMonth(); const mIdx = monthsArr.indexOf(currentMonth);
-        let wk = `<th class="habit-name-cell" rowspan="3" style="background:white; color:#95A5A6; border-left:none;">HABITS</th>`, dy = '', dt = '';
+        let wk = `<th class="habit-name-cell" rowspan="3" style="background:white !important; color:#AAA; border-left:none;">HABITS</th>`, dy = '', dt = '';
         for (let d = 1; d <= totalDays; d++) {
-            if ((d-1) % 7 === 0) wk += `<th colspan="${Math.min(7, totalDays-d+1)}" class="week-header">Week ${Math.floor((d-1)/7)+1}</th>`;
+            if ((d-1) % 7 === 0) wk += `<th colspan="${Math.min(7, totalDays-d+1)}" class="week-header">WEEK ${Math.floor((d-1)/7)+1}</th>`;
             const dateObj = new Date(2026, mIdx, d);
             dy += `<th class="day-label">${dayNames[dateObj.getDay()]}</th>`;
             dt += `<th class="date-label">${d}</th>`;
@@ -289,7 +281,7 @@
 
     function toggleDay(hIdx, dIdx) {
         allData[currentMonth][hIdx].days[dIdx] = !allData[currentMonth][hIdx].days[dIdx];
-        if(allData[currentMonth][hIdx].days[dIdx]) confetti({ particleCount: 30, spread: 40, origin: { y: 0.8 } });
+        if(allData[currentMonth][hIdx].days[dIdx]) confetti({ particleCount: 40, spread: 60, origin: { y: 0.8 } });
         updateUI();
     }
 
@@ -304,17 +296,17 @@
         el.select();
         document.execCommand('copy');
         document.body.removeChild(el);
-        alert("✅ Data Copied!");
+        alert("✅ Data copied to clipboard!");
     }
 
     function pasteDataToRestore() {
-        const userInput = prompt("Paste code here:");
+        const userInput = prompt("Paste your data code here:");
         if (userInput) {
             try {
                 allData = JSON.parse(userInput);
                 updateUI();
-                alert("🔥 Success!");
-            } catch (e) { alert("❌ Error!"); }
+                alert("🔥 Data restored successfully!");
+            } catch (e) { alert("❌ Invalid code!"); }
         }
     }
 
