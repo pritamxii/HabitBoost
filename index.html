@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Habit Tracker Pro - Lifetime Version</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --bg: #ffffff;
+            --primary: #6366f1;
+            --secondary: #ec4899;
+            --card: #ffffff;
+            --text: #1e293b;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            margin: 0;
+            padding: 10px;
+            color: var(--text);
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: 24px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            border: 1px solid #f1f5f9;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .progress-ring {
+            position: relative;
+            width: 140px;
+            height: 140px;
+        }
+
+        .progress-ring svg { transform: rotate(-90deg); }
+
+        .progress-ring circle {
+            fill: none;
+            stroke-width: 10;
+            stroke-linecap: round;
+        }
+
+        .bg-circle { stroke: #f1f5f9; }
+        .fg-circle {
+            stroke: var(--secondary);
+            transition: stroke-dashoffset 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .percentage-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .perc-val { font-size: 24px; font-weight: 800; display: block; }
+        .perc-label { font-size: 10px; color: #64748b; text-transform: uppercase; letter-spacing: 1px; }
+
+        .header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; }
+        
+        select { 
+            padding: 10px 15px; 
+            border-radius: 12px; 
+            border: 1px solid #e2e8f0; 
+            font-weight: 600; 
+            background: #fff;
+        }
+        
+        .table-wrapper { width: 100%; overflow-x: auto; border-radius: 15px; margin-top: 15px; border: 1px solid #f1f5f9; }
+        table { border-collapse: collapse; min-width: 1000px; width: 100%; background: white; }
+        th, td { border: 1px solid #f1f5f9; padding: 12px 5px; text-align: center; }
+
+        .habit-name-cell {
+            position: sticky; left: 0; background: white; z-index: 5;
+            min-width: 160px; text-align: left; padding-left: 15px; font-weight: 600;
+            border-right: 2px solid #f1f5f9;
+        }
+
+        .day-label { font-size: 11px; font-weight: bold; color: #64748b; background: #f8fafc; }
+        
+        /* Today's Highlight */
+        .today-highlight { 
+            background-color: #fff1f2 !important; 
+            box-shadow: inset 0 0 0 2px var(--secondary);
+        }
+
+        .btn-add { background: var(--primary); color: white; border: none; padding: 12px 25px; border-radius: 12px; cursor: pointer; font-weight: bold; }
+
+        .input-group { display: flex; gap: 10px; margin-bottom: 20px; }
+        input[type="text"] { flex: 1; padding: 12px; border: 1px solid #e2e8f0; border-radius: 12px; outline: none; }
+
+        .delete-btn { color: #cbd5e1; border: none; background: none; cursor: pointer; margin-left: 8px; font-size: 12px; }
+        .delete-btn:hover { color: #f87171; }
+        
+        input[type="checkbox"] { width: 20px; height: 20px; accent-color: var(--secondary); cursor: pointer; }
+
+        @media (max-width: 600px) {
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card header">
+        <h2 style="margin:0; color: var(--primary); font-size: 20px;">Master Habit Tracker 🚀</h2>
+        <select id="monthSelect" onchange="changeMonth()">
+            <option>January</option><option>February</option><option>March</option>
+            <option>April</option><option>May</option><option>June</option>
+            <option>July</option><option>August</option><option>September</option>
+            <option>October</option><option>November</option><option>December</option>
+        </select>
+    </div>
+
+    <div class="stats-grid">
+        <div class="card stat-card">
+            <h4 style="margin:0 0 12px 0; font-size: 14px; color: #64748b;">Today's Progress</h4>
+            <div class="progress-ring">
+                <svg width="140" height="140">
+                    <circle class="bg-circle" cx="70" cy="70" r="60"></circle>
+                    <circle class="fg-circle" id="todayRing" cx="70" cy="70" r="60" stroke-dasharray="377" stroke-dashoffset="377"></circle>
+                </svg>
+                <div class="percentage-text">
+                    <span class="perc-val" id="todayPercent">0%</span>
+                    <span class="perc-label" id="todayName">Loading...</span>
+                </div>
+            </div>
+        </div>
+        <div class="card" style="grid-column: span 2;">
+            <canvas id="progressChart" style="height: 180px;"></canvas>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="input-group">
+            <input type="text" id="habitInput" placeholder="Enter new habit...">
+            <button class="btn-add" onclick="addHabit()">Add Habit</button>
+        </div>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th class="habit-name-cell" rowspan="2">Habits</th>
+                        <th colspan="7" style="color:#db2777; background:#fff1f2;">Week 1</th>
+                        <th colspan="7" style="color:#2563eb; background:#eff6ff;">Week 2</th>
+                        <th colspan="7" style="color:#059669; background:#ecfdf5;">Week 3</th>
+                        <th colspan="7" style="color:#d97706; background:#fffbeb;">Week 4</th>
+                    </tr>
+                    <tr id="dayLabelsRow"></tr>
+                </thead>
+                <tbody id="habitBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<audio id="clickSound" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3"></audio>
+
+<script>
+    let currentMonth = "";
+    let allData = JSON.parse(localStorage.getItem('HabitMaster_V1')) || {};
+    let myChart;
+
+    function init() {
+        const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+        const d = new Date();
+        currentMonth = months[d.getMonth()];
+        document.getElementById('monthSelect').value = currentMonth;
+        
+        createDayLabels();
+        initChart();
+        updateUI();
+    }
+
+    function getTodayIdx() {
+        const now = new Date();
+        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        const startDayOfWeek = startOfMonth.getDay(); 
+        return startDayOfWeek + now.getDate() - 1;
+    }
+
+    function createDayLabels() {
+        const row = document.getElementById('dayLabelsRow');
+        const days = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+        let html = '';
+        for(let w=0; w<4; w++) {
+            days.forEach(d => html += `<th class="day-label">${d}</th>`);
+        }
+        row.innerHTML = html;
+    }
+
+    function initChart() {
+        const ctx = document.getElementById('progressChart').getContext('2d');
+        myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                datasets: [{
+                    label: 'Success Rate %',
+                    data: [0, 0, 0, 0],
+                    borderColor: '#6366f1',
+                    fill: true,
+                    backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                    tension: 0.4
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: false }
+        });
+    }
+
+    function updateUI() {
+        localStorage.setItem('HabitMaster_V1', JSON.stringify(allData));
+        renderTable();
+        calculateStats();
+    }
+
+    function renderTable() {
+        const body = document.getElementById('habitBody');
+        body.innerHTML = '';
+        const habits = allData[currentMonth] || [];
+        const todayIdx = getTodayIdx();
+
+        habits.forEach((h, hIdx) => {
+            let row = `<tr><td class="habit-name-cell">${h.name} <button class="delete-btn" onclick="deleteHabit(${hIdx})">✕</button></td>`;
+            for(let d=0; d<28; d++) {
+                let highlight = (d === todayIdx) ? 'today-highlight' : '';
+                row += `<td class="${highlight}"><input type="checkbox" ${h.days[d]?'checked':''} onclick="toggleDay(${hIdx},${d})"></td>`;
+            }
+            row += `</tr>`;
+            body.innerHTML += row;
+        });
+    }
+
+    function calculateStats() {
+        const habits = allData[currentMonth] || [];
+        const now = new Date();
+        document.getElementById('todayName').innerText = now.toLocaleDateString('en-US', { weekday: 'long' });
+
+        const todayIdx = getTodayIdx();
+        let weeklyStats = [0,0,0,0];
+        let todayPercent = 0;
+
+        if(habits.length > 0) {
+            for(let w=0; w<4; w++) {
+                let count = 0;
+                habits.forEach(h => {
+                    for(let d=w*7; d<(w+1)*7; d++) { if(h.days[d]) count++; }
+                });
+                weeklyStats[w] = Math.round((count / (habits.length * 7)) * 100);
+            }
+            let todayDone = 0;
+            habits.forEach(h => { if(h.days[todayIdx]) todayDone++; });
+            todayPercent = Math.round((todayDone / habits.length) * 100);
+        }
+
+        myChart.data.datasets[0].data = weeklyStats;
+        myChart.update();
+
+        document.getElementById('todayPercent').innerText = todayPercent + "%";
+        const circumference = 377; 
+        const offset = circumference - (todayPercent / 100) * circumference;
+        document.getElementById('todayRing').style.strokeDashoffset = offset;
+    }
+
+    function addHabit() {
+        const val = document.getElementById('habitInput').value;
+        if(!val) return;
+        if(!allData[currentMonth]) allData[currentMonth] = [];
+        allData[currentMonth].push({ name: val, days: new Array(28).fill(false) });
+        document.getElementById('habitInput').value = '';
+        updateUI();
+    }
+
+    function toggleDay(hIdx, dIdx) {
+        allData[currentMonth][hIdx].days[dIdx] = !allData[currentMonth][hIdx].days[dIdx];
+        if(allData[currentMonth][hIdx].days[dIdx]) {
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+            document.getElementById('clickSound').play().catch(()=>{});
+        }
+        updateUI();
+    }
+
+    function deleteHabit(idx) {
+        if(confirm("Delete habit?")) {
+            allData[currentMonth].splice(idx, 1);
+            updateUI();
+        }
+    }
+
+    function changeMonth() {
+        currentMonth = document.getElementById('monthSelect').value;
+        updateUI();
+    }
+
+    window.onload = init;
+</script>
+</body>
+</html>
