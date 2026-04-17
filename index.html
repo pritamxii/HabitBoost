@@ -109,6 +109,17 @@
 
         input[type="checkbox"] { width: 22px; height: 22px; accent-color: var(--row-accent); cursor: pointer; transition: 0.2s; }
 
+        /* Monthly Sheet Styling */
+        .summary-sheet {
+            background: #FFF; border-radius: 20px; border: 2px solid #EEE; margin-top: 15px; overflow: hidden;
+            text-align: left;
+        }
+        .summary-header { background: #F8F9FA; padding: 15px; font-weight: 800; border-bottom: 1px solid #EEE; color: var(--primary); display: flex; justify-content: space-between; }
+        .summary-row { display: flex; justify-content: space-between; padding: 12px 15px; border-bottom: 1px solid #F9F9F9; font-size: 14px; }
+        .summary-row:last-child { border: none; }
+        .summary-label { color: #888; font-weight: 600; }
+        .summary-value { font-weight: 800; color: #333; }
+
         .modal {
             display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%;
             background-color: rgba(0,0,0,0.4); align-items: center; justify-content: center; backdrop-filter: blur(4px);
@@ -217,6 +228,19 @@
         </table>
     </div>
 
+    <div class="summary-sheet animate-in delay-5">
+        <div class="summary-header">
+            <span>📊 MONTHLY ANALYSIS</span>
+            <span id="sheetMonthName" style="color:#888; font-size:12px;">JANUARY</span>
+        </div>
+        <div id="summaryRows">
+            <div class="summary-row"><span class="summary-label">Total Habits Tracked</span><span class="summary-value" id="sheetTotalHabits">0</span></div>
+            <div class="summary-row"><span class="summary-label">Monthly Consistency</span><span class="summary-value" id="sheetAvgScore">0%</span></div>
+            <div class="summary-row"><span class="summary-label">Status Rank</span><span class="summary-value" id="sheetRank" style="color:var(--primary);">NO DATA</span></div>
+            <div class="summary-row"><span class="summary-label">Best Streak</span><span class="summary-value" id="sheetBestStreak">0 Days</span></div>
+        </div>
+    </div>
+
     <div class="backup-controls animate-in delay-5">
         <button class="btn-pill" onclick="openExportModal()">💾 Export Data</button>
         <button class="btn-pill" onclick="openRestoreModal()">📂 Restore Data</button>
@@ -251,7 +275,6 @@
     const monthsArr = ["January","February","March","April","May","June","July","August","September","October","November","December"];
     const dayNames = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
     
-    // AUTO-SAVE INITIALIZATION (Loading data)
     let allData = JSON.parse(localStorage.getItem('HabitPro_Pritam_Final')) || {};
     let notesData = JSON.parse(localStorage.getItem('HabitPro_Notes_Pritam')) || {};
     let myChart;
@@ -285,7 +308,6 @@
         });
     }
 
-    // AUTO-SAVE CORE FUNCTION
     function updateUI() { 
         localStorage.setItem('HabitPro_Pritam_Final', JSON.stringify(allData)); 
         localStorage.setItem('HabitPro_Notes_Pritam', JSON.stringify(notesData));
@@ -323,6 +345,8 @@
         const totalDays = new Date(2026, monthsArr.indexOf(currentMonth) + 1, 0).getDate();
         const today = new Date().getDate();
         const isThisMonth = (new Date().getMonth() === monthsArr.indexOf(currentMonth));
+        document.getElementById('sheetMonthName').innerText = currentMonth.toUpperCase();
+
         let wk = `<th class="habit-name-cell" rowspan="3" style="background:white !important;">HABITS</th>`, dy = '', dt = '';
         for (let d = 1; d <= totalDays; d++) {
             if ((d-1) % 7 === 0) wk += `<th colspan="${Math.min(7, totalDays-d+1)}" style="background:#FDF5F2; font-size:10px; color:#A88;">WEEK ${Math.floor((d-1)/7)+1}</th>`;
@@ -344,6 +368,12 @@
         let scores = [];
         let totalMonthScore = 0;
         let trackedDays = 0;
+        let maxStreakFound = 0;
+
+        habits.forEach(h => {
+            const s = calculateStreak(h.days);
+            if(s > maxStreakFound) maxStreakFound = s;
+        });
 
         for (let d = 0; d < totalDays; d++) {
             let done = habits.filter(h => h.days[d]).length;
@@ -361,12 +391,23 @@
         document.getElementById('day-copper').className = 'badge' + (todayScore >= 60 && todayScore < 80 ? ' copper-active' : '');
 
         const avgScore = trackedDays > 0 ? Math.round(totalMonthScore / trackedDays) : 0;
-        const statusMsg = document.getElementById('statusMessage');
         
+        // Update Sheet Values
+        document.getElementById('sheetTotalHabits').innerText = habits.length;
+        document.getElementById('sheetAvgScore').innerText = avgScore + "%";
+        document.getElementById('sheetBestStreak').innerText = maxStreakFound + " Days";
+
         document.getElementById('mon-gold').className = 'badge' + (avgScore >= 90 ? ' gold-active milestone-champion' : '');
         document.getElementById('mon-silver').className = 'badge' + (avgScore >= 80 && avgScore < 90 ? ' silver-active' : '');
         document.getElementById('mon-copper').className = 'badge' + (avgScore >= 60 && avgScore < 80 ? ' copper-active' : '');
 
+        const sheetRank = document.getElementById('sheetRank');
+        if(avgScore >= 90) { sheetRank.innerText = "CHAMPION 👑"; sheetRank.style.color = "#FFD700"; }
+        else if(avgScore >= 80) { sheetRank.innerText = "SILVER ELITE 🥈"; sheetRank.style.color = "#C0C0C0"; }
+        else if(avgScore >= 60) { sheetRank.innerText = "CONTENDER 🥉"; sheetRank.style.color = "#CD7F32"; }
+        else { sheetRank.innerText = "BEGINNER 🌱"; sheetRank.style.color = "#AAA"; }
+
+        const statusMsg = document.getElementById('statusMessage');
         if(avgScore >= 90) statusMsg.innerText = "🏆 Monthly Rank: CHAMPION! Incredible!";
         else if(avgScore >= 60) statusMsg.innerText = "✨ Making steady progress. Keep going! 💪";
         else statusMsg.innerText = "Track daily to unlock higher medals! 🚀";
@@ -376,37 +417,10 @@
     }
 
     function openNoteModal(day) { activeNoteDay = day; const key = `${currentMonth}_${day}`; document.getElementById('noteTitle').innerText = `Journal - ${currentMonth} ${day}`; document.getElementById('dayNoteInput').value = notesData[key] || ""; document.getElementById('noteModal').style.display = 'flex'; }
-    
-    function saveDayNote() { 
-        const key = `${currentMonth}_${activeNoteDay}`; 
-        const val = document.getElementById('dayNoteInput').value.trim(); 
-        if(val) notesData[key] = val; else delete notesData[key]; 
-        updateUI(); // Auto-saves to storage
-        closeModal('noteModal'); 
-    }
-
-    function addHabit() { 
-        const val = document.getElementById('habitInput').value.trim(); 
-        if(!val) return; 
-        if(!allData[currentMonth]) allData[currentMonth] = []; 
-        allData[currentMonth].push({ name: val, days: new Array(31).fill(false) }); 
-        document.getElementById('habitInput').value = ''; 
-        updateUI(); // Auto-saves to storage
-    }
-
-    function toggleDay(hIdx, dIdx) { 
-        allData[currentMonth][hIdx].days[dIdx] = !allData[currentMonth][hIdx].days[dIdx]; 
-        if(allData[currentMonth][hIdx].days[dIdx]) confetti({ particleCount: 30, spread: 60, origin: { y: 0.8 } }); 
-        updateUI(); // Auto-saves to storage
-    }
-
-    function deleteHabit(idx) { 
-        if(confirm("Are you sure?")) { 
-            allData[currentMonth].splice(idx, 1); 
-            updateUI(); // Auto-saves to storage
-        } 
-    }
-
+    function saveDayNote() { const key = `${currentMonth}_${activeNoteDay}`; const val = document.getElementById('dayNoteInput').value.trim(); if(val) notesData[key] = val; else delete notesData[key]; updateUI(); closeModal('noteModal'); }
+    function addHabit() { const val = document.getElementById('habitInput').value.trim(); if(!val) return; if(!allData[currentMonth]) allData[currentMonth] = []; allData[currentMonth].push({ name: val, days: new Array(31).fill(false) }); document.getElementById('habitInput').value = ''; updateUI(); }
+    function toggleDay(hIdx, dIdx) { allData[currentMonth][hIdx].days[dIdx] = !allData[currentMonth][hIdx].days[dIdx]; if(allData[currentMonth][hIdx].days[dIdx]) confetti({ particleCount: 30, spread: 60, origin: { y: 0.8 } }); updateUI(); }
+    function deleteHabit(idx) { if(confirm("Are you sure?")) { allData[currentMonth].splice(idx, 1); updateUI(); } }
     function changeMonth() { currentMonth = document.getElementById('monthSelect').value; updateUI(); }
     function openExportModal() { const combined = { habits: allData, notes: notesData }; document.getElementById('generatedCode').innerText = btoa(JSON.stringify(combined)); document.getElementById('exportModal').style.display = 'flex'; }
     function openRestoreModal() { document.getElementById('restoreInput').value = ''; document.getElementById('restoreModal').style.display = 'flex'; }
