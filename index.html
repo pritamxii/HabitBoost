@@ -304,7 +304,21 @@
         myChart = new Chart(ctx, {
             type: 'line',
             data: { labels: [], datasets: [{ data: [], borderColor: '#B2AC88', backgroundColor: 'rgba(178, 172, 136, 0.2)', fill: true, tension: 0.3 }] },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: false, 
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        min: 0,
+                        max: 100,
+                        ticks: {
+                            stepSize: 20
+                        }
+                    }
+                }
+            }
         });
     }
 
