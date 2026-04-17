@@ -15,32 +15,49 @@
             --today-highlight: #FFF9C4; 
         }
 
-        /* Opening Animation Styles */
+        /* Improved Premium Loader */
         #loader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: white; display: flex; flex-direction: column;
+            background: #FFFFFF; display: flex; flex-direction: column;
             align-items: center; justify-content: center; z-index: 9999;
-            transition: opacity 0.8s ease, visibility 0.8s;
+            transition: all 0.8s cubic-bezier(0.645, 0.045, 0.355, 1);
         }
+        .loader-content { text-align: center; }
         .loader-logo {
-            font-size: 24px; font-weight: 800; color: var(--primary);
-            animation: pulse 1.5s infinite ease-in-out;
+            font-size: 28px; font-weight: 800; color: var(--primary);
+            letter-spacing: -1px; margin-bottom: 20px;
+            animation: floating 3s ease-in-out infinite;
         }
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.1); opacity: 0.7; }
+        .loader-bar-container {
+            width: 150px; height: 3px; background: #F0F0F0;
+            border-radius: 10px; overflow: hidden; margin: 0 auto;
+        }
+        .loader-bar {
+            width: 0%; height: 100%; background: var(--primary);
+            animation: progressLoad 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+        
+        @keyframes floating {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        @keyframes progressLoad {
+            0% { width: 0%; }
+            100% { width: 100%; }
         }
 
-        @keyframes slideUpFade {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* Smooth Entrance Animations */
+        @keyframes revealUp {
+            from { opacity: 0; transform: translateY(40px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
-        .animate-in { opacity: 0; animation: slideUpFade 0.8s ease forwards; }
+        .animate-in { opacity: 0; animation: revealUp 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
         .delay-1 { animation-delay: 0.1s; }
         .delay-2 { animation-delay: 0.2s; }
         .delay-3 { animation-delay: 0.3s; }
         .delay-4 { animation-delay: 0.4s; }
+        .delay-5 { animation-delay: 0.5s; }
 
         .habit-row-0 { --row-bg: #E8F5E9; --row-accent: #81C784; --row-text: #2E7D32; } 
         .habit-row-1 { --row-bg: #F1F3E9; --row-accent: #A3AD85; --row-text: #556B2F; } 
@@ -64,6 +81,16 @@
 
         .perc-val { font-size: 68px; font-weight: 800; color: #D1C4E9; line-height: 1; margin: 10px 0; }
 
+        /* Achievement Box Styling */
+        .achievement-box {
+            background: linear-gradient(145deg, #ffffff, #fcfcfc);
+            border: 1px solid rgba(178, 172, 136, 0.15);
+        }
+        .achievement-title {
+            font-size: 13px; font-weight: 800; color: var(--primary);
+            letter-spacing: 1.5px; margin-bottom: 15px; text-transform: uppercase;
+        }
+
         .table-wrapper { width: 100%; overflow-x: auto; border: 1px solid #EEE; border-radius: 20px; background: white; }
         table { border-collapse: collapse; min-width: 1000px; width: 100%; }
         th, td { border: 1px solid #F8F8F8; padding: 12px 5px; text-align: center; }
@@ -82,7 +109,6 @@
 
         input[type="checkbox"] { width: 22px; height: 22px; accent-color: var(--row-accent); cursor: pointer; transition: 0.2s; }
 
-        /* Modal Styles */
         .modal {
             display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%;
             background-color: rgba(0,0,0,0.4); align-items: center; justify-content: center; backdrop-filter: blur(4px);
@@ -93,7 +119,18 @@
         }
         @keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-        /* Fixed Backup Code Area */
+        .badge-container { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+        .badge-row { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; margin-bottom: 5px; }
+        .badge { padding: 8px 10px; border-radius: 12px; font-size: 9px; font-weight: bold; background: #F5F5F5; color: #CCC; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid transparent; }
+        
+        .badge.gold-active { background: #FFD700; color: #554400; box-shadow: 0 4px 10px rgba(255,215,0,0.3); border: 1px solid #DAA520; transform: translateY(-2px); }
+        .badge.silver-active { background: #E0E0E0; color: #444; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #BDBDBD; transform: translateY(-2px); }
+        .badge.copper-active { background: #CD7F32; color: #FFF; box-shadow: 0 4px 10px rgba(205,127,50,0.2); border: 1px solid #8B4513; transform: translateY(-2px); }
+        .milestone-champion { background: linear-gradient(135deg, #FFD700, #FFA500) !important; color: #554400 !important; border: none !important; box-shadow: 0 4px 15px rgba(255,165,0,0.4); }
+
+        .note-btn { cursor: pointer; font-size: 10px; color: #BBB; display: block; margin-top: 4px; }
+        .note-btn.has-note { color: var(--primary); font-weight: bold; }
+
         .code-area {
             background: #FDFDFD; border: 1px dashed #E0E0E0; border-radius: 20px;
             padding: 20px; margin: 20px 0; font-family: inherit; font-size: 14px;
@@ -115,13 +152,13 @@
 <body>
 
 <div id="loader">
-    <div class="loader-logo">🌿 Habit Master Pro</div>
-    <div style="margin-top: 15px; width: 40px; height: 2px; background: #EEE; position: relative; overflow: hidden;">
-        <div style="position: absolute; width: 20px; height: 100%; background: var(--primary); animation: loadingBar 1s infinite linear;"></div>
+    <div class="loader-content">
+        <div class="loader-logo">🌿 Habit Master Pro</div>
+        <div class="loader-bar-container">
+            <div class="loader-bar"></div>
+        </div>
     </div>
 </div>
-
-<style> @keyframes loadingBar { 0% { left: -20px; } 100% { left: 40px; } } </style>
 
 <div class="container">
     <div class="card animate-in delay-1" style="display:flex; justify-content:space-between; align-items:center;">
@@ -144,12 +181,32 @@
         <canvas id="habitChart"></canvas>
     </div>
 
-    <div class="card animate-in delay-4" style="display:flex; gap:10px;">
+    <div class="card achievement-box animate-in delay-4">
+        <div class="achievement-title">🏆 Achievement Gallery 🏆</div>
+        <div class="badge-container">
+            <div style="font-size: 10px; color: #AAA; font-weight: 800; margin-bottom: 4px;">DAILY MILESTONES</div>
+            <div class="badge-row">
+                <div class="badge" id="day-copper">🥉 COPPER (60%+)</div>
+                <div class="badge" id="day-silver">🥈 SILVER (80%+)</div>
+                <div class="badge" id="day-gold">🥇 GOLD (90%+)</div>
+            </div>
+            
+            <div style="font-size: 10px; color: #AAA; font-weight: 800; margin-top: 8px; margin-bottom: 4px;">MONTHLY RANK</div>
+            <div class="badge-row">
+                <div class="badge" id="mon-copper">🥉 COPPER (60%+)</div>
+                <div class="badge" id="mon-silver">🥈 SILVER (80%+)</div>
+                <div class="badge" id="mon-gold">👑 CHAMPION (90%+)</div>
+            </div>
+            <div id="statusMessage" style="font-size: 11px; color: #B2AC88; margin-top: 10px; font-weight: 600;">Complete habits to unlock medals!</div>
+        </div>
+    </div>
+
+    <div class="card animate-in delay-5" style="display:flex; gap:10px;">
         <input type="text" id="habitInput" style="flex:1; padding:12px; border:1px solid #EEE; border-radius:15px; outline:none;" placeholder="New habit...">
         <button onclick="addHabit()" style="background:var(--primary); color:white; border:none; padding:0 20px; border-radius:15px; font-weight:bold;">+ Add</button>
     </div>
 
-    <div class="table-wrapper animate-in delay-4">
+    <div class="table-wrapper animate-in delay-5">
         <table>
             <thead>
                 <tr id="weekHeaderRow"></tr>
@@ -160,7 +217,7 @@
         </table>
     </div>
 
-    <div class="backup-controls animate-in delay-4">
+    <div class="backup-controls animate-in delay-5">
         <button class="btn-pill" onclick="openExportModal()">💾 Export Data</button>
         <button class="btn-pill" onclick="openRestoreModal()">📂 Restore Data</button>
     </div>
@@ -182,19 +239,31 @@
     <span class="close-text" onclick="closeModal('restoreModal')">Close</span>
 </div></div>
 
+<div id="noteModal" class="modal"><div class="modal-content">
+    <h2 id="noteTitle">Journal</h2>
+    <textarea class="code-area" id="dayNoteInput" placeholder="Write about your day..." style="text-align: left; height: 120px;"></textarea>
+    <button class="modal-btn" onclick="saveDayNote()">💾 Save Note</button>
+    <span class="close-text" onclick="closeModal('noteModal')">Close</span>
+</div></div>
+
 <script>
     let currentMonth = "";
     const monthsArr = ["January","February","March","April","May","June","July","August","September","October","November","December"];
     const dayNames = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+    
+    // AUTO-SAVE INITIALIZATION (Loading data)
     let allData = JSON.parse(localStorage.getItem('HabitPro_Pritam_Final')) || {};
+    let notesData = JSON.parse(localStorage.getItem('HabitPro_Notes_Pritam')) || {};
     let myChart;
+    let activeNoteDay = null;
 
     window.onload = function() {
         setTimeout(() => {
             const loader = document.getElementById('loader');
             loader.style.opacity = '0';
+            loader.style.transform = 'scale(1.1)';
             setTimeout(() => loader.style.visibility = 'hidden', 800);
-        }, 1200);
+        }, 1500);
         init();
     };
 
@@ -211,9 +280,16 @@
         const ctx = document.getElementById('habitChart').getContext('2d');
         myChart = new Chart(ctx, {
             type: 'line',
-            data: { labels: [], datasets: [{ data: [], borderColor: '#9EA39F', backgroundColor: 'rgba(158, 163, 159, 0.4)', fill: true, tension: 0.3 }] },
+            data: { labels: [], datasets: [{ data: [], borderColor: '#B2AC88', backgroundColor: 'rgba(178, 172, 136, 0.2)', fill: true, tension: 0.3 }] },
             options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
         });
+    }
+
+    // AUTO-SAVE CORE FUNCTION
+    function updateUI() { 
+        localStorage.setItem('HabitPro_Pritam_Final', JSON.stringify(allData)); 
+        localStorage.setItem('HabitPro_Notes_Pritam', JSON.stringify(notesData));
+        renderHeader(); renderTable(); calculateStats(); 
     }
 
     function calculateStreak(days) {
@@ -243,11 +319,6 @@
         });
     }
 
-    function updateUI() { 
-        localStorage.setItem('HabitPro_Pritam_Final', JSON.stringify(allData)); 
-        renderHeader(); renderTable(); calculateStats(); 
-    }
-
     function renderHeader() {
         const totalDays = new Date(2026, monthsArr.indexOf(currentMonth) + 1, 0).getDate();
         const today = new Date().getDate();
@@ -257,8 +328,10 @@
             if ((d-1) % 7 === 0) wk += `<th colspan="${Math.min(7, totalDays-d+1)}" style="background:#FDF5F2; font-size:10px; color:#A88;">WEEK ${Math.floor((d-1)/7)+1}</th>`;
             const dateObj = new Date(2026, monthsArr.indexOf(currentMonth), d);
             const isToday = (isThisMonth && d === today) ? 'today-highlight-col' : '';
+            const noteKey = `${currentMonth}_${d}`;
+            const noteClass = notesData[noteKey] ? 'has-note' : '';
             dy += `<th class="${isToday}" style="font-size:9px; color:#DDD;">${dayNames[dateObj.getDay()]}</th>`;
-            dt += `<th class="${isToday}" style="font-size:12px; font-weight:bold;">${d}</th>`;
+            dt += `<th class="${isToday}" style="font-size:12px; font-weight:bold;">${d}<span class="note-btn ${noteClass}" onclick="openNoteModal(${d})">📝</span></th>`;
         }
         document.getElementById('weekHeaderRow').innerHTML = wk;
         document.getElementById('dayNameRow').innerHTML = dy;
@@ -269,50 +342,77 @@
         const habits = allData[currentMonth] || [];
         const totalDays = new Date(2026, monthsArr.indexOf(currentMonth) + 1, 0).getDate();
         let scores = [];
+        let totalMonthScore = 0;
+        let trackedDays = 0;
+
         for (let d = 0; d < totalDays; d++) {
             let done = habits.filter(h => h.days[d]).length;
-            scores.push(habits.length ? Math.round((done/habits.length)*100) : 0);
+            let dayPerc = habits.length ? Math.round((done/habits.length)*100) : 0;
+            scores.push(dayPerc);
+            if(dayPerc > 0) { totalMonthScore += dayPerc; trackedDays++; }
         }
-        document.getElementById('todayPercent').innerText = (scores[new Date().getDate()-1] || 0) + "%";
+
+        const todayIdx = new Date().getDate() - 1;
+        const todayScore = (new Date().getMonth() === monthsArr.indexOf(currentMonth)) ? (scores[todayIdx] || 0) : 0;
+        document.getElementById('todayPercent').innerText = todayScore + "%";
+        
+        document.getElementById('day-gold').className = 'badge' + (todayScore >= 90 ? ' gold-active' : '');
+        document.getElementById('day-silver').className = 'badge' + (todayScore >= 80 && todayScore < 90 ? ' silver-active' : '');
+        document.getElementById('day-copper').className = 'badge' + (todayScore >= 60 && todayScore < 80 ? ' copper-active' : '');
+
+        const avgScore = trackedDays > 0 ? Math.round(totalMonthScore / trackedDays) : 0;
+        const statusMsg = document.getElementById('statusMessage');
+        
+        document.getElementById('mon-gold').className = 'badge' + (avgScore >= 90 ? ' gold-active milestone-champion' : '');
+        document.getElementById('mon-silver').className = 'badge' + (avgScore >= 80 && avgScore < 90 ? ' silver-active' : '');
+        document.getElementById('mon-copper').className = 'badge' + (avgScore >= 60 && avgScore < 80 ? ' copper-active' : '');
+
+        if(avgScore >= 90) statusMsg.innerText = "🏆 Monthly Rank: CHAMPION! Incredible!";
+        else if(avgScore >= 60) statusMsg.innerText = "✨ Making steady progress. Keep going! 💪";
+        else statusMsg.innerText = "Track daily to unlock higher medals! 🚀";
+
         myChart.data.labels = Array.from({length: totalDays}, (_, i) => i + 1);
         myChart.data.datasets[0].data = scores; myChart.update();
     }
 
-    function addHabit() {
-        const val = document.getElementById('habitInput').value.trim(); if(!val) return;
-        if(!allData[currentMonth]) allData[currentMonth] = [];
-        allData[currentMonth].push({ name: val, days: new Array(31).fill(false) });
-        document.getElementById('habitInput').value = ''; updateUI();
+    function openNoteModal(day) { activeNoteDay = day; const key = `${currentMonth}_${day}`; document.getElementById('noteTitle').innerText = `Journal - ${currentMonth} ${day}`; document.getElementById('dayNoteInput').value = notesData[key] || ""; document.getElementById('noteModal').style.display = 'flex'; }
+    
+    function saveDayNote() { 
+        const key = `${currentMonth}_${activeNoteDay}`; 
+        const val = document.getElementById('dayNoteInput').value.trim(); 
+        if(val) notesData[key] = val; else delete notesData[key]; 
+        updateUI(); // Auto-saves to storage
+        closeModal('noteModal'); 
     }
 
-    function toggleDay(hIdx, dIdx) {
-        allData[currentMonth][hIdx].days[dIdx] = !allData[currentMonth][hIdx].days[dIdx];
-        if(allData[currentMonth][hIdx].days[dIdx]) confetti({ particleCount: 30, spread: 60, origin: { y: 0.8 } });
-        updateUI();
+    function addHabit() { 
+        const val = document.getElementById('habitInput').value.trim(); 
+        if(!val) return; 
+        if(!allData[currentMonth]) allData[currentMonth] = []; 
+        allData[currentMonth].push({ name: val, days: new Array(31).fill(false) }); 
+        document.getElementById('habitInput').value = ''; 
+        updateUI(); // Auto-saves to storage
     }
 
-    function deleteHabit(idx) { if(confirm("Are you sure?")) { allData[currentMonth].splice(idx, 1); updateUI(); } }
+    function toggleDay(hIdx, dIdx) { 
+        allData[currentMonth][hIdx].days[dIdx] = !allData[currentMonth][hIdx].days[dIdx]; 
+        if(allData[currentMonth][hIdx].days[dIdx]) confetti({ particleCount: 30, spread: 60, origin: { y: 0.8 } }); 
+        updateUI(); // Auto-saves to storage
+    }
+
+    function deleteHabit(idx) { 
+        if(confirm("Are you sure?")) { 
+            allData[currentMonth].splice(idx, 1); 
+            updateUI(); // Auto-saves to storage
+        } 
+    }
+
     function changeMonth() { currentMonth = document.getElementById('monthSelect').value; updateUI(); }
-    
-    function openExportModal() { 
-        const code = btoa(JSON.stringify(allData));
-        document.getElementById('generatedCode').innerText = code; 
-        document.getElementById('exportModal').style.display = 'flex'; 
-    }
-    
+    function openExportModal() { const combined = { habits: allData, notes: notesData }; document.getElementById('generatedCode').innerText = btoa(JSON.stringify(combined)); document.getElementById('exportModal').style.display = 'flex'; }
     function openRestoreModal() { document.getElementById('restoreInput').value = ''; document.getElementById('restoreModal').style.display = 'flex'; }
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-    
-    function copyCode() { 
-        const codeText = document.getElementById('generatedCode').innerText;
-        navigator.clipboard.writeText(codeText).then(() => {
-            alert("Backup code copied to clipboard!");
-        }).catch(err => {
-            alert("Error copying code.");
-        });
-    }
-
-    function processRestore() { try { allData = JSON.parse(atob(document.getElementById('restoreInput').value.trim())); updateUI(); alert("Success!"); closeModal('restoreModal'); } catch(e) { alert("Invalid!"); } }
+    function copyCode() { navigator.clipboard.writeText(document.getElementById('generatedCode').innerText).then(() => alert("Copied!")); }
+    function processRestore() { try { const restored = JSON.parse(atob(document.getElementById('restoreInput').value.trim())); if(restored.habits) { allData = restored.habits; notesData = restored.notes || {}; } else { allData = restored; } updateUI(); alert("Success!"); closeModal('restoreModal'); } catch(e) { alert("Invalid code!"); } }
 </script>
 </body>
 </html>
