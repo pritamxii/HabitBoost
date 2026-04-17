@@ -12,109 +12,83 @@
             --card: #FFFFFF;
             --primary: #B2AC88; 
             --text: #2D3436;
-            --today-highlight: #FFDAB9; 
-            --pastel-purple-low: rgba(179, 157, 219, 0.4); 
+            --today-highlight: #FFF9C4; /* আজকের তারিখের জন্য হালকা হলুদ হাইলাইট */
         }
 
-        /* Colorful Row Themes from Images */
-        .habit-row-0 { --row-bg: #E8F5E9; --row-accent: #81C784; --row-text: #2E7D32; } /* Green */
-        .habit-row-1 { --row-bg: #F1F3E9; --row-accent: #A3AD85; --row-text: #556B2F; } /* Sage */
-        .habit-row-2 { --row-bg: #E3F2FD; --row-accent: #90CAF9; --row-text: #1565C0; } /* Blue */
-        .habit-row-3 { --row-bg: #F3E5F5; --row-accent: #CE93D8; --row-text: #6A1B9A; } /* Purple */
-        .habit-row-4 { --row-bg: #FAF3E0; --row-accent: #D7CCC8; --row-text: #8D6E63; } /* Tan */
+        /* Row Themes */
+        .habit-row-0 { --row-bg: #E8F5E9; --row-accent: #81C784; --row-text: #2E7D32; } 
+        .habit-row-1 { --row-bg: #F1F3E9; --row-accent: #A3AD85; --row-text: #556B2F; } 
+        .habit-row-2 { --row-bg: #E3F2FD; --row-accent: #90CAF9; --row-text: #1565C0; } 
+        .habit-row-3 { --row-bg: #F3E5F5; --row-accent: #CE93D8; --row-text: #6A1B9A; } 
+        .habit-row-4 { --row-bg: #FAF3E0; --row-accent: #D7CCC8; --row-text: #8D6E63; } 
 
         body {
-            font-family: 'Inter', -apple-system, sans-serif;
+            font-family: 'Inter', sans-serif;
             background-color: var(--bg);
-            margin: 0;
-            padding: 10px;
-            color: var(--text);
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
+            margin: 0; padding: 10px; color: var(--text);
+            display: flex; flex-direction: column; min-height: 100vh;
         }
 
-        .container { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 15px; flex-grow: 1; width: 100%; box-sizing: border-box; }
+        .container { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 15px; width: 100%; }
 
         .card { 
             background: var(--card); border-radius: 20px; padding: 20px; 
             box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: center;
         }
 
-        .progress-card { background: white; padding: 25px 15px; border-radius: 24px; margin-bottom: 10px; }
-        .progress-title { font-size: 18px; font-weight: 700; color: #2D3436; margin-bottom: 15px; }
         .perc-val { font-size: 68px; font-weight: 800; color: #D1C4E9; line-height: 1; margin: 10px 0; }
-        .date-display { font-size: 14px; color: #636E72; margin-top: 10px; font-weight: 500; }
 
-        .header-section { display: flex; justify-content: space-between; align-items: center; text-align: left; flex-wrap: wrap; gap: 10px; }
-        h3 { margin: 0; color: var(--primary); font-size: 20px; }
-
-        select { 
-            padding: 8px 12px; border-radius: 12px; border: 1px solid #EEE; 
-            background: white; font-weight: 600; color: var(--text);
-        }
-
-        .stats-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
-        @media (min-width: 768px) { .stats-grid { grid-template-columns: 350px 1fr; } }
-
-        .chart-container { height: 250px; padding: 15px; background: white; border-radius: 24px; display: flex; align-items: center; }
-
-        .table-wrapper {
-            width: 100%; overflow-x: auto; border: 1px solid #EEE; 
-            border-radius: 20px; background: white; -webkit-overflow-scrolling: touch;
-        }
-
+        .table-wrapper { width: 100%; overflow-x: auto; border: 1px solid #EEE; border-radius: 20px; background: white; }
         table { border-collapse: collapse; min-width: 1000px; width: 100%; }
         th, td { border: 1px solid #F8F8F8; padding: 12px 5px; text-align: center; }
 
-        .week-header { background: #FFF4F0; font-size: 11px; font-weight: 800; color: #8D6E63; }
-        .day-label { font-size: 10px; color: #BBB; background: #FBFCFB; }
-        .date-label { font-size: 12px; font-weight: bold; }
-
         .habit-name-cell {
-            position: sticky; left: 0; z-index: 10;
-            min-width: 180px; text-align: left; padding-left: 15px;
-            font-weight: 700; border-right: 3px solid var(--accent);
-            background-color: var(--row-bg) !important;
-            color: var(--row-text);
-            border-left: 5px solid var(--row-accent);
+            position: sticky; left: 0; z-index: 10; min-width: 180px; text-align: left; padding-left: 15px;
+            font-weight: 700; background-color: var(--row-bg) !important; color: var(--row-text); border-left: 5px solid var(--row-accent);
         }
 
-        /* Checkbox styling to match colorful rows */
-        .day-cell { transition: background 0.3s; }
-        .day-cell.checked { background-color: var(--row-bg); }
-        
-        input[type="checkbox"] { 
-            width: 22px; height: 22px; 
-            accent-color: var(--row-accent); 
-            cursor: pointer; 
-        }
+        /* আজ যা যা করছি তার কলাম আলাদা দেখাবে */
+        .today-highlight-col { background-color: var(--today-highlight) !important; }
 
         .streak-badge {
-            font-size: 10px; background: white; color: #FF4D4D;
-            padding: 2px 6px; border-radius: 8px; margin-left: 5px; border: 1px solid #FFE0E0;
+            font-size: 10px; background: white; color: #FF5252; padding: 2px 6px; 
+            border-radius: 8px; margin-left: 5px; border: 1px solid #FFCDD2; font-weight: 800;
         }
 
-        .today-col { background-color: var(--today-highlight) !important; border-radius: 5px; }
-        .delete-btn { color: #BBB; border: none; background: none; font-size: 14px; cursor: pointer; float: right; padding: 0 5px; }
+        input[type="checkbox"] { width: 22px; height: 22px; accent-color: var(--row-accent); cursor: pointer; }
 
-        .backup-controls { display: flex; justify-content: center; gap: 10px; margin-top: 5px; padding-bottom: 20px; }
-        .btn-easy { 
-            font-size: 11px; padding: 10px 15px; border-radius: 12px; border: 1px solid #DDD; 
-            background: #fdfdfd; color: #555; font-weight: bold; cursor: pointer;
+        /* Modal Design */
+        .modal {
+            display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.4); align-items: center; justify-content: center;
         }
+        .modal-content {
+            background: white; padding: 30px; border-radius: 40px; width: 85%; max-width: 380px;
+            text-align: center; box-shadow: 0 15px 50px rgba(0,0,0,0.15);
+        }
+        .code-area {
+            background: #FDFDFD; border: 1px dashed #E0E0E0; border-radius: 20px;
+            padding: 20px; margin: 20px 0; font-family: inherit; font-size: 14px;
+            color: #555; width: 100%; box-sizing: border-box; outline: none; 
+            resize: none; min-height: 80px; text-align: center;
+        }
+        .modal-btn {
+            background: #B8B391; color: white; border: none; padding: 16px;
+            border-radius: 20px; cursor: pointer; font-weight: bold; width: 100%; font-size: 18px;
+        }
+        .close-text { display: block; margin-top: 20px; color: #BBB; cursor: pointer; font-size: 16px; }
 
-        .developed-by {
-            text-align: center; padding: 25px; color: var(--pastel-purple-low);
-            font-weight: 700; font-size: 14px; letter-spacing: 1px; text-transform: uppercase;
-        }
+        .backup-controls { display: flex; justify-content: center; gap: 15px; margin: 20px 0; }
+        .btn-pill { padding: 12px 20px; border-radius: 15px; border: 1px solid #EEE; cursor: pointer; background: #FFF; color: #555; font-weight: 600; }
+
+        .delete-btn { color: #BBB; border: none; background: none; float: right; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="card header-section">
-        <h3>Habit Master Pro 2026 🌿</h3>
+    <div class="card" style="display:flex; justify-content:space-between; align-items:center;">
+        <h3 style="margin:0; color:var(--primary);">Habit Master Pro 2026</h3>
         <select id="monthSelect" onchange="changeMonth()">
             <option>January</option><option>February</option><option>March</option>
             <option>April</option><option>May</option><option>June</option>
@@ -123,23 +97,19 @@
         </select>
     </div>
 
-    <div class="stats-grid">
-        <div class="card progress-card">
-            <div class="progress-title">Today's Progress</div>
-            <div class="perc-val" id="todayPercent">0%</div>
-            <div class="date-display" id="fullDateDisplay">Loading...</div>
-        </div>
-        
-        <div class="card chart-container">
-            <canvas id="habitChart"></canvas>
-        </div>
+    <div class="card">
+        <div style="font-weight:bold; color:#888">Today's Progress</div>
+        <div class="perc-val" id="todayPercent">0%</div>
+        <div id="fullDateDisplay" style="color:#BBB; font-size:14px; font-weight: 600;"></div>
+    </div>
+    
+    <div class="card" style="height: 250px;">
+        <canvas id="habitChart"></canvas>
     </div>
 
-    <div class="card" style="padding: 10px 15px;">
-        <div style="display:flex; gap:10px;">
-            <input type="text" id="habitInput" style="flex:1; padding:12px; border:1px solid #EEE; border-radius:15px; outline:none;" placeholder="Add new habit...">
-            <button onclick="addHabit()" style="background:var(--primary); color:white; border:none; padding:0 20px; border-radius:15px; font-weight:bold; cursor:pointer;">+ Add</button>
-        </div>
+    <div class="card" style="display:flex; gap:10px;">
+        <input type="text" id="habitInput" style="flex:1; padding:12px; border:1px solid #EEE; border-radius:15px; outline:none;" placeholder="New habit...">
+        <button onclick="addHabit()" style="background:var(--primary); color:white; border:none; padding:0 20px; border-radius:15px; font-weight:bold;">+ Add</button>
     </div>
 
     <div class="table-wrapper">
@@ -154,14 +124,24 @@
     </div>
 
     <div class="backup-controls">
-        <button class="btn-easy" onclick="copyDataToClipboard()">💾 Export Data Code</button>
-        <button class="btn-easy" onclick="pasteDataToRestore()">📂 Paste to Restore</button>
+        <button class="btn-pill" onclick="openExportModal()">💾 Export Data</button>
+        <button class="btn-pill" onclick="openRestoreModal()">📂 Restore Data</button>
     </div>
 
-    <div class="developed-by">
-        Developed by Pritam
-    </div>
+    <div style="text-align:center; color:#DDD; font-weight:800; padding:20px;">DEVELOPED BY PRITAM</div>
 </div>
+
+<div id="exportModal" class="modal"><div class="modal-content">
+    <h2>Backup Code 🔑</h2><div class="code-area" id="generatedCode"></div>
+    <button class="modal-btn" onclick="copyCode()">📋 Copy Code</button>
+    <span class="close-text" onclick="closeModal('exportModal')">Close</span>
+</div></div>
+
+<div id="restoreModal" class="modal"><div class="modal-content">
+    <h2>Restore Data 📂</h2><textarea class="code-area" id="restoreInput" placeholder="Paste here..."></textarea>
+    <button class="modal-btn" onclick="processRestore()">🔥 Restore Now</button>
+    <span class="close-text" onclick="closeModal('restoreModal')">Close</span>
+</div></div>
 
 <script>
     let currentMonth = "";
@@ -174,12 +154,7 @@
         const d = new Date();
         currentMonth = monthsArr[d.getMonth()];
         document.getElementById('monthSelect').value = currentMonth;
-        
-        const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-        const dayName = days[d.getDay()];
-        const dayNum = d.getDate();
-        document.getElementById('fullDateDisplay').innerText = `${dayName} ${currentMonth.substring(0,3)} ${dayNum} 2026`;
-
+        document.getElementById('fullDateDisplay').innerText = d.toDateString().toUpperCase();
         initChart();
         updateUI();
     }
@@ -187,128 +162,98 @@
     function initChart() {
         const ctx = document.getElementById('habitChart').getContext('2d');
         myChart = new Chart(ctx, {
-            type: 'bar',
-            data: { labels: [], datasets: [{ data: [], backgroundColor: '#B0C4DE', borderRadius: 8 }] },
-            options: {
-                responsive: true, maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: { 
-                    y: { beginAtZero: true, max: 100, ticks: { stepSize: 25 }, grid: { color: '#F0F0F0' } },
-                    x: { grid: { display: false }, ticks: { font: { size: 9 } } }
-                }
-            }
+            type: 'line',
+            data: { labels: [], datasets: [{ data: [], borderColor: '#9EA39F', backgroundColor: 'rgba(158, 163, 159, 0.4)', fill: true, tension: 0.3 }] },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
         });
     }
 
     function calculateStreak(days) {
         let streak = 0;
         const todayIdx = new Date().getDate() - 1;
+        // আজকের দিন থেকে পেছনের দিকে চেক করবে
         for (let i = todayIdx; i >= 0; i--) {
             if (days[i]) streak++;
-            else if (i < todayIdx) break;
+            else if (i < todayIdx) break; // গ্যাপ থাকলে স্ট্রিক শেষ
         }
         return streak;
     }
 
     function renderTable() {
-        const body = document.getElementById('habitBody');
-        body.innerHTML = '';
+        const body = document.getElementById('habitBody'); body.innerHTML = '';
         const habits = allData[currentMonth] || [];
-        const totalDays = getDaysInMonth();
         const today = new Date().getDate();
-        const isCurrentMonth = (new Date().getMonth() === monthsArr.indexOf(currentMonth));
+        const isThisMonth = (new Date().getMonth() === monthsArr.indexOf(currentMonth));
 
         habits.forEach((h, hIdx) => {
             const streak = calculateStreak(h.days);
-            const rowTheme = `habit-row-${hIdx % 5}`; // Rotates through 5 colors
+            let row = `<tr class="habit-row-${hIdx % 5}"><td class="habit-name-cell">${h.name} ${streak > 1 ? `<span class="streak-badge">🔥 ${streak}</span>` : ''}<button class="delete-btn" onclick="deleteHabit(${hIdx})">×</button></td>`;
             
-            let row = `<tr class="${rowTheme}"><td class="habit-name-cell">
-                        ${h.name} 
-                        ${streak > 1 ? `<span class="streak-badge">🔥 ${streak}</span>` : ''}
-                        <button class="delete-btn" onclick="deleteHabit(${hIdx})">×</button>
-                      </td>`;
-            for(let d=0; d<totalDays; d++) {
-                const isToday = (isCurrentMonth && (d+1) === today) ? 'today-col' : '';
-                const isChecked = h.days[d] ? 'checked' : '';
-                row += `<td class="day-cell ${isToday} ${isChecked}"><input type="checkbox" ${h.days[d]?'checked':''} onclick="toggleDay(${hIdx},${d})"></td>`;
+            for(let d=0; d < new Date(2026, monthsArr.indexOf(currentMonth) + 1, 0).getDate(); d++) {
+                // আজকের তারিখের কলাম হাইলাইট করার লজিক
+                const isTodayCol = (isThisMonth && (d+1) === today) ? 'today-highlight-col' : '';
+                row += `<td class="${isTodayCol}"><input type="checkbox" ${h.days[d]?'checked':''} onclick="toggleDay(${hIdx},${d})"></td>`;
             }
             body.innerHTML += row + `</tr>`;
         });
     }
 
-    function getDaysInMonth() { return new Date(2026, monthsArr.indexOf(currentMonth) + 1, 0).getDate(); }
-    
     function updateUI() { 
         localStorage.setItem('HabitPro_Pritam_Final', JSON.stringify(allData)); 
-        renderHeader(); 
-        renderTable(); 
-        calculateStats(); 
+        renderHeader(); renderTable(); calculateStats(); 
     }
 
     function renderHeader() {
-        const totalDays = getDaysInMonth(); const mIdx = monthsArr.indexOf(currentMonth);
-        let wk = `<th class="habit-name-cell" rowspan="3" style="background:white !important; color:#AAA; border-left:none;">HABITS</th>`, dy = '', dt = '';
+        const totalDays = new Date(2026, monthsArr.indexOf(currentMonth) + 1, 0).getDate();
+        const today = new Date().getDate();
+        const isThisMonth = (new Date().getMonth() === monthsArr.indexOf(currentMonth));
+
+        let wk = `<th class="habit-name-cell" rowspan="3" style="background:white !important;">HABITS</th>`, dy = '', dt = '';
         for (let d = 1; d <= totalDays; d++) {
-            if ((d-1) % 7 === 0) wk += `<th colspan="${Math.min(7, totalDays-d+1)}" class="week-header">WEEK ${Math.floor((d-1)/7)+1}</th>`;
-            const dateObj = new Date(2026, mIdx, d);
-            dy += `<th class="day-label">${dayNames[dateObj.getDay()]}</th>`;
-            dt += `<th class="date-label">${d}</th>`;
+            if ((d-1) % 7 === 0) wk += `<th colspan="${Math.min(7, totalDays-d+1)}" style="background:#FDF5F2; font-size:10px; color:#A88;">WEEK ${Math.floor((d-1)/7)+1}</th>`;
+            const dateObj = new Date(2026, monthsArr.indexOf(currentMonth), d);
+            const isToday = (isThisMonth && d === today) ? 'today-highlight-col' : '';
+            dy += `<th class="${isToday}" style="font-size:9px; color:#DDD;">${dayNames[dateObj.getDay()]}</th>`;
+            dt += `<th class="${isToday}" style="font-size:12px; font-weight:bold;">${d}</th>`;
         }
-        document.getElementById('weekHeaderRow').innerHTML = wk; document.getElementById('dayNameRow').innerHTML = dy; document.getElementById('dateNumberRow').innerHTML = dt;
+        document.getElementById('weekHeaderRow').innerHTML = wk;
+        document.getElementById('dayNameRow').innerHTML = dy;
+        document.getElementById('dateNumberRow').innerHTML = dt;
     }
 
     function calculateStats() {
-        const habits = allData[currentMonth] || []; const totalDays = getDaysInMonth();
-        const todayIdx = new Date().getDate() - 1;
-        const isCurrentMonth = (new Date().getMonth() === monthsArr.indexOf(currentMonth));
-        let labels = [], scores = [], todayP = 0;
+        const habits = allData[currentMonth] || [];
+        const totalDays = new Date(2026, monthsArr.indexOf(currentMonth) + 1, 0).getDate();
+        let scores = [];
         for (let d = 0; d < totalDays; d++) {
-            labels.push(d + 1); let done = 0;
-            habits.forEach(h => { if(h.days[d]) done++; });
-            let p = habits.length ? Math.round((done/habits.length)*100) : 0;
-            scores.push(p); if(isCurrentMonth && d === todayIdx) todayP = p;
+            let done = habits.filter(h => h.days[d]).length;
+            scores.push(habits.length ? Math.round((done/habits.length)*100) : 0);
         }
-        document.getElementById('todayPercent').innerText = todayP + "%";
-        myChart.data.labels = labels; myChart.data.datasets[0].data = scores; myChart.update();
+        document.getElementById('todayPercent').innerText = (scores[new Date().getDate()-1] || 0) + "%";
+        myChart.data.labels = Array.from({length: totalDays}, (_, i) => i + 1);
+        myChart.data.datasets[0].data = scores; myChart.update();
     }
 
     function addHabit() {
         const val = document.getElementById('habitInput').value.trim(); if(!val) return;
         if(!allData[currentMonth]) allData[currentMonth] = [];
-        allData[currentMonth].push({ name: val, days: new Array(getDaysInMonth()).fill(false) });
+        allData[currentMonth].push({ name: val, days: new Array(31).fill(false) });
         document.getElementById('habitInput').value = ''; updateUI();
     }
 
     function toggleDay(hIdx, dIdx) {
         allData[currentMonth][hIdx].days[dIdx] = !allData[currentMonth][hIdx].days[dIdx];
-        if(allData[currentMonth][hIdx].days[dIdx]) confetti({ particleCount: 40, spread: 60, origin: { y: 0.8 } });
+        if(allData[currentMonth][hIdx].days[dIdx]) confetti({ particleCount: 30, spread: 60, origin: { y: 0.8 } });
         updateUI();
     }
 
-    function deleteHabit(idx) { if(confirm("Delete this habit?")) { allData[currentMonth].splice(idx, 1); updateUI(); } }
+    function deleteHabit(idx) { if(confirm("Are you sure?")) { allData[currentMonth].splice(idx, 1); updateUI(); } }
     function changeMonth() { currentMonth = document.getElementById('monthSelect').value; updateUI(); }
-
-    function copyDataToClipboard() {
-        const dataStr = JSON.stringify(allData);
-        const el = document.createElement('textarea');
-        el.value = dataStr;
-        document.body.appendChild(el);
-        el.select();
-        document.execCommand('copy');
-        document.body.removeChild(el);
-        alert("✅ Data copied to clipboard!");
-    }
-
-    function pasteDataToRestore() {
-        const userInput = prompt("Paste your data code here:");
-        if (userInput) {
-            try {
-                allData = JSON.parse(userInput);
-                updateUI();
-                alert("🔥 Data restored successfully!");
-            } catch (e) { alert("❌ Invalid code!"); }
-        }
-    }
+    function openExportModal() { document.getElementById('generatedCode').innerText = btoa(JSON.stringify(allData)); document.getElementById('exportModal').style.display = 'flex'; }
+    function openRestoreModal() { document.getElementById('restoreInput').value = ''; document.getElementById('restoreModal').style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+    function copyCode() { navigator.clipboard.writeText(document.getElementById('generatedCode').innerText); alert("Copied!"); }
+    function processRestore() { try { allData = JSON.parse(atob(document.getElementById('restoreInput').value.trim())); updateUI(); alert("Success!"); closeModal('restoreModal'); } catch(e) { alert("Invalid!"); } }
 
     window.onload = init;
 </script>
