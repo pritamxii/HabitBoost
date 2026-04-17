@@ -12,10 +12,36 @@
             --card: #FFFFFF;
             --primary: #B2AC88; 
             --text: #2D3436;
-            --today-highlight: #FFF9C4; /* আজকের তারিখের জন্য হালকা হলুদ হাইলাইট */
+            --today-highlight: #FFF9C4; 
         }
 
-        /* Row Themes */
+        /* Opening Animation Styles */
+        #loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: white; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; z-index: 9999;
+            transition: opacity 0.8s ease, visibility 0.8s;
+        }
+        .loader-logo {
+            font-size: 24px; font-weight: 800; color: var(--primary);
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.7; }
+        }
+
+        @keyframes slideUpFade {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-in { opacity: 0; animation: slideUpFade 0.8s ease forwards; }
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+
         .habit-row-0 { --row-bg: #E8F5E9; --row-accent: #81C784; --row-text: #2E7D32; } 
         .habit-row-1 { --row-bg: #F1F3E9; --row-accent: #A3AD85; --row-text: #556B2F; } 
         .habit-row-2 { --row-bg: #E3F2FD; --row-accent: #90CAF9; --row-text: #1565C0; } 
@@ -47,7 +73,6 @@
             font-weight: 700; background-color: var(--row-bg) !important; color: var(--row-text); border-left: 5px solid var(--row-accent);
         }
 
-        /* আজ যা যা করছি তার কলাম আলাদা দেখাবে */
         .today-highlight-col { background-color: var(--today-highlight) !important; }
 
         .streak-badge {
@@ -55,23 +80,27 @@
             border-radius: 8px; margin-left: 5px; border: 1px solid #FFCDD2; font-weight: 800;
         }
 
-        input[type="checkbox"] { width: 22px; height: 22px; accent-color: var(--row-accent); cursor: pointer; }
+        input[type="checkbox"] { width: 22px; height: 22px; accent-color: var(--row-accent); cursor: pointer; transition: 0.2s; }
 
-        /* Modal Design */
+        /* Modal Styles */
         .modal {
             display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.4); align-items: center; justify-content: center;
+            background-color: rgba(0,0,0,0.4); align-items: center; justify-content: center; backdrop-filter: blur(4px);
         }
         .modal-content {
             background: white; padding: 30px; border-radius: 40px; width: 85%; max-width: 380px;
-            text-align: center; box-shadow: 0 15px 50px rgba(0,0,0,0.15);
+            text-align: center; box-shadow: 0 15px 50px rgba(0,0,0,0.15); animation: zoomIn 0.3s ease-out;
         }
+        @keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        /* Fixed Backup Code Area */
         .code-area {
             background: #FDFDFD; border: 1px dashed #E0E0E0; border-radius: 20px;
             padding: 20px; margin: 20px 0; font-family: inherit; font-size: 14px;
             color: #555; width: 100%; box-sizing: border-box; outline: none; 
-            resize: none; min-height: 80px; text-align: center;
+            text-align: center; word-break: break-all; max-height: 150px; overflow-y: auto;
         }
+        
         .modal-btn {
             background: #B8B391; color: white; border: none; padding: 16px;
             border-radius: 20px; cursor: pointer; font-weight: bold; width: 100%; font-size: 18px;
@@ -80,14 +109,22 @@
 
         .backup-controls { display: flex; justify-content: center; gap: 15px; margin: 20px 0; }
         .btn-pill { padding: 12px 20px; border-radius: 15px; border: 1px solid #EEE; cursor: pointer; background: #FFF; color: #555; font-weight: 600; }
-
         .delete-btn { color: #BBB; border: none; background: none; float: right; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
 
+<div id="loader">
+    <div class="loader-logo">🌿 Habit Master Pro</div>
+    <div style="margin-top: 15px; width: 40px; height: 2px; background: #EEE; position: relative; overflow: hidden;">
+        <div style="position: absolute; width: 20px; height: 100%; background: var(--primary); animation: loadingBar 1s infinite linear;"></div>
+    </div>
+</div>
+
+<style> @keyframes loadingBar { 0% { left: -20px; } 100% { left: 40px; } } </style>
+
 <div class="container">
-    <div class="card" style="display:flex; justify-content:space-between; align-items:center;">
+    <div class="card animate-in delay-1" style="display:flex; justify-content:space-between; align-items:center;">
         <h3 style="margin:0; color:var(--primary);">Habit Master Pro 2026</h3>
         <select id="monthSelect" onchange="changeMonth()">
             <option>January</option><option>February</option><option>March</option>
@@ -97,22 +134,22 @@
         </select>
     </div>
 
-    <div class="card">
+    <div class="card animate-in delay-2">
         <div style="font-weight:bold; color:#888">Today's Progress</div>
         <div class="perc-val" id="todayPercent">0%</div>
         <div id="fullDateDisplay" style="color:#BBB; font-size:14px; font-weight: 600;"></div>
     </div>
     
-    <div class="card" style="height: 250px;">
+    <div class="card animate-in delay-3" style="height: 250px;">
         <canvas id="habitChart"></canvas>
     </div>
 
-    <div class="card" style="display:flex; gap:10px;">
+    <div class="card animate-in delay-4" style="display:flex; gap:10px;">
         <input type="text" id="habitInput" style="flex:1; padding:12px; border:1px solid #EEE; border-radius:15px; outline:none;" placeholder="New habit...">
         <button onclick="addHabit()" style="background:var(--primary); color:white; border:none; padding:0 20px; border-radius:15px; font-weight:bold;">+ Add</button>
     </div>
 
-    <div class="table-wrapper">
+    <div class="table-wrapper animate-in delay-4">
         <table>
             <thead>
                 <tr id="weekHeaderRow"></tr>
@@ -123,7 +160,7 @@
         </table>
     </div>
 
-    <div class="backup-controls">
+    <div class="backup-controls animate-in delay-4">
         <button class="btn-pill" onclick="openExportModal()">💾 Export Data</button>
         <button class="btn-pill" onclick="openRestoreModal()">📂 Restore Data</button>
     </div>
@@ -132,13 +169,15 @@
 </div>
 
 <div id="exportModal" class="modal"><div class="modal-content">
-    <h2>Backup Code 🔑</h2><div class="code-area" id="generatedCode"></div>
+    <h2>Backup Code 🔑</h2>
+    <div class="code-area" id="generatedCode"></div>
     <button class="modal-btn" onclick="copyCode()">📋 Copy Code</button>
     <span class="close-text" onclick="closeModal('exportModal')">Close</span>
 </div></div>
 
 <div id="restoreModal" class="modal"><div class="modal-content">
-    <h2>Restore Data 📂</h2><textarea class="code-area" id="restoreInput" placeholder="Paste here..."></textarea>
+    <h2>Restore Data 📂</h2>
+    <textarea class="code-area" id="restoreInput" placeholder="Paste here..."></textarea>
     <button class="modal-btn" onclick="processRestore()">🔥 Restore Now</button>
     <span class="close-text" onclick="closeModal('restoreModal')">Close</span>
 </div></div>
@@ -149,6 +188,15 @@
     const dayNames = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
     let allData = JSON.parse(localStorage.getItem('HabitPro_Pritam_Final')) || {};
     let myChart;
+
+    window.onload = function() {
+        setTimeout(() => {
+            const loader = document.getElementById('loader');
+            loader.style.opacity = '0';
+            setTimeout(() => loader.style.visibility = 'hidden', 800);
+        }, 1200);
+        init();
+    };
 
     function init() {
         const d = new Date();
@@ -171,10 +219,9 @@
     function calculateStreak(days) {
         let streak = 0;
         const todayIdx = new Date().getDate() - 1;
-        // আজকের দিন থেকে পেছনের দিকে চেক করবে
         for (let i = todayIdx; i >= 0; i--) {
             if (days[i]) streak++;
-            else if (i < todayIdx) break; // গ্যাপ থাকলে স্ট্রিক শেষ
+            else if (i < todayIdx) break;
         }
         return streak;
     }
@@ -188,9 +235,7 @@
         habits.forEach((h, hIdx) => {
             const streak = calculateStreak(h.days);
             let row = `<tr class="habit-row-${hIdx % 5}"><td class="habit-name-cell">${h.name} ${streak > 1 ? `<span class="streak-badge">🔥 ${streak}</span>` : ''}<button class="delete-btn" onclick="deleteHabit(${hIdx})">×</button></td>`;
-            
             for(let d=0; d < new Date(2026, monthsArr.indexOf(currentMonth) + 1, 0).getDate(); d++) {
-                // আজকের তারিখের কলাম হাইলাইট করার লজিক
                 const isTodayCol = (isThisMonth && (d+1) === today) ? 'today-highlight-col' : '';
                 row += `<td class="${isTodayCol}"><input type="checkbox" ${h.days[d]?'checked':''} onclick="toggleDay(${hIdx},${d})"></td>`;
             }
@@ -207,7 +252,6 @@
         const totalDays = new Date(2026, monthsArr.indexOf(currentMonth) + 1, 0).getDate();
         const today = new Date().getDate();
         const isThisMonth = (new Date().getMonth() === monthsArr.indexOf(currentMonth));
-
         let wk = `<th class="habit-name-cell" rowspan="3" style="background:white !important;">HABITS</th>`, dy = '', dt = '';
         for (let d = 1; d <= totalDays; d++) {
             if ((d-1) % 7 === 0) wk += `<th colspan="${Math.min(7, totalDays-d+1)}" style="background:#FDF5F2; font-size:10px; color:#A88;">WEEK ${Math.floor((d-1)/7)+1}</th>`;
@@ -249,13 +293,26 @@
 
     function deleteHabit(idx) { if(confirm("Are you sure?")) { allData[currentMonth].splice(idx, 1); updateUI(); } }
     function changeMonth() { currentMonth = document.getElementById('monthSelect').value; updateUI(); }
-    function openExportModal() { document.getElementById('generatedCode').innerText = btoa(JSON.stringify(allData)); document.getElementById('exportModal').style.display = 'flex'; }
+    
+    function openExportModal() { 
+        const code = btoa(JSON.stringify(allData));
+        document.getElementById('generatedCode').innerText = code; 
+        document.getElementById('exportModal').style.display = 'flex'; 
+    }
+    
     function openRestoreModal() { document.getElementById('restoreInput').value = ''; document.getElementById('restoreModal').style.display = 'flex'; }
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-    function copyCode() { navigator.clipboard.writeText(document.getElementById('generatedCode').innerText); alert("Copied!"); }
-    function processRestore() { try { allData = JSON.parse(atob(document.getElementById('restoreInput').value.trim())); updateUI(); alert("Success!"); closeModal('restoreModal'); } catch(e) { alert("Invalid!"); } }
+    
+    function copyCode() { 
+        const codeText = document.getElementById('generatedCode').innerText;
+        navigator.clipboard.writeText(codeText).then(() => {
+            alert("Backup code copied to clipboard!");
+        }).catch(err => {
+            alert("Error copying code.");
+        });
+    }
 
-    window.onload = init;
+    function processRestore() { try { allData = JSON.parse(atob(document.getElementById('restoreInput').value.trim())); updateUI(); alert("Success!"); closeModal('restoreModal'); } catch(e) { alert("Invalid!"); } }
 </script>
 </body>
 </html>
