@@ -120,6 +120,14 @@
         .summary-label { color: #888; font-weight: 600; }
         .summary-value { font-weight: 800; color: #333; }
 
+        /* New Task Log Styles */
+        .task-log-container { margin-top: 15px; background: white; border-radius: 20px; border: 2px solid #EEE; overflow: hidden; text-align: left; }
+        .task-log-header { background: #F8F9FA; padding: 15px; font-weight: 800; color: var(--primary); border-bottom: 1px solid #EEE; }
+        .task-list { padding: 10px 15px; list-style: none; margin: 0; }
+        .task-item { padding: 10px 0; border-bottom: 1px solid #F9F9F9; font-size: 14px; font-weight: 600; display: flex; justify-content: space-between; color: #555; }
+        .task-item:last-child { border: none; }
+        .task-date { color: #BBB; font-size: 12px; font-weight: normal; }
+
         .modal {
             display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%;
             background-color: rgba(0,0,0,0.4); align-items: center; justify-content: center; backdrop-filter: blur(4px);
@@ -241,6 +249,11 @@
         </div>
     </div>
 
+    <div class="task-log-container animate-in delay-5">
+        <div class="task-log-header">📝 TASK TIMELINE (ADDED ON)</div>
+        <div class="task-list" id="taskTimeline"></div>
+    </div>
+
     <div class="backup-controls animate-in delay-5">
         <button class="btn-pill" onclick="openExportModal()">💾 Export Data</button>
         <button class="btn-pill" onclick="openRestoreModal()">📂 Restore Data</button>
@@ -307,17 +320,14 @@
             options: { 
                 responsive: true, 
                 maintainAspectRatio: false, 
-                plugins: { legend: { display: false } },
                 scales: {
                     y: {
                         beginAtZero: true,
-                        min: 0,
-                        max: 100,
-                        ticks: {
-                            stepSize: 20
-                        }
+                        max: 100, // Graph always range 100%
+                        ticks: { stepSize: 20 }
                     }
-                }
+                },
+                plugins: { legend: { display: false } } 
             }
         });
     }
@@ -325,7 +335,7 @@
     function updateUI() { 
         localStorage.setItem('HabitPro_Pritam_Final', JSON.stringify(allData)); 
         localStorage.setItem('HabitPro_Notes_Pritam', JSON.stringify(notesData));
-        renderHeader(); renderTable(); calculateStats(); 
+        renderHeader(); renderTable(); calculateStats(); renderTimeline();
     }
 
     function calculateStreak(days) {
@@ -352,6 +362,20 @@
                 row += `<td class="${isTodayCol}"><input type="checkbox" ${h.days[d]?'checked':''} onclick="toggleDay(${hIdx},${d})"></td>`;
             }
             body.innerHTML += row + `</tr>`;
+        });
+    }
+
+    function renderTimeline() {
+        const timeline = document.getElementById('taskTimeline');
+        const habits = allData[currentMonth] || [];
+        timeline.innerHTML = '';
+        if(habits.length === 0) {
+            timeline.innerHTML = '<div style="color:#CCC; font-size:12px; text-align:center; padding:10px;">No tasks added yet.</div>';
+            return;
+        }
+        habits.forEach(h => {
+            const dateStr = h.addedOn || "N/A";
+            timeline.innerHTML += `<div class="task-item"><span>${h.name}</span><span class="task-date">(${dateStr})</span></div>`;
         });
     }
 
@@ -406,7 +430,6 @@
 
         const avgScore = trackedDays > 0 ? Math.round(totalMonthScore / trackedDays) : 0;
         
-        // Update Sheet Values
         document.getElementById('sheetTotalHabits').innerText = habits.length;
         document.getElementById('sheetAvgScore').innerText = avgScore + "%";
         document.getElementById('sheetBestStreak').innerText = maxStreakFound + " Days";
@@ -432,7 +455,18 @@
 
     function openNoteModal(day) { activeNoteDay = day; const key = `${currentMonth}_${day}`; document.getElementById('noteTitle').innerText = `Journal - ${currentMonth} ${day}`; document.getElementById('dayNoteInput').value = notesData[key] || ""; document.getElementById('noteModal').style.display = 'flex'; }
     function saveDayNote() { const key = `${currentMonth}_${activeNoteDay}`; const val = document.getElementById('dayNoteInput').value.trim(); if(val) notesData[key] = val; else delete notesData[key]; updateUI(); closeModal('noteModal'); }
-    function addHabit() { const val = document.getElementById('habitInput').value.trim(); if(!val) return; if(!allData[currentMonth]) allData[currentMonth] = []; allData[currentMonth].push({ name: val, days: new Array(31).fill(false) }); document.getElementById('habitInput').value = ''; updateUI(); }
+    
+    function addHabit() { 
+        const val = document.getElementById('habitInput').value.trim(); 
+        if(!val) return; 
+        const now = new Date();
+        const formattedDate = `${now.getDate()} ${monthsArr[now.getMonth()]}`;
+        if(!allData[currentMonth]) allData[currentMonth] = []; 
+        allData[currentMonth].push({ name: val, days: new Array(31).fill(false), addedOn: formattedDate }); 
+        document.getElementById('habitInput').value = ''; 
+        updateUI(); 
+    }
+
     function toggleDay(hIdx, dIdx) { allData[currentMonth][hIdx].days[dIdx] = !allData[currentMonth][hIdx].days[dIdx]; if(allData[currentMonth][hIdx].days[dIdx]) confetti({ particleCount: 30, spread: 60, origin: { y: 0.8 } }); updateUI(); }
     function deleteHabit(idx) { if(confirm("Are you sure?")) { allData[currentMonth].splice(idx, 1); updateUI(); } }
     function changeMonth() { currentMonth = document.getElementById('monthSelect').value; updateUI(); }
