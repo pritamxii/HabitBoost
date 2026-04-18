@@ -13,6 +13,7 @@
             --primary: #B2AC88; 
             --text: #2D3436;
             --today-highlight: #FFF9C4; 
+            --danger: #FF7675;
         }
 
         /* Improved Premium Loader */
@@ -46,11 +47,18 @@
             100% { width: 100%; }
         }
 
-        /* Smooth Entrance Animations */
+        /* Smooth Entrance & Exit Animations */
         @keyframes revealUp {
             from { opacity: 0; transform: translateY(40px) scale(0.98); }
             to { opacity: 1; transform: translateY(0) scale(1); }
         }
+
+        /* NEW: Habit Removal Animation */
+        @keyframes slideOutLeft {
+            0% { transform: translateX(0); opacity: 1; }
+            100% { transform: translateX(-50px); opacity: 0; }
+        }
+        .habit-removing { animation: slideOutLeft 0.5s ease-in forwards !important; }
 
         .animate-in { opacity: 0; animation: revealUp 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
         .delay-1 { animation-delay: 0.1s; }
@@ -81,7 +89,6 @@
 
         .perc-val { font-size: 68px; font-weight: 800; color: #D1C4E9; line-height: 1; margin: 10px 0; }
 
-        /* Achievement Box Styling */
         .achievement-box {
             background: linear-gradient(145deg, #ffffff, #fcfcfc);
             border: 1px solid rgba(178, 172, 136, 0.15);
@@ -98,6 +105,7 @@
         .habit-name-cell {
             position: sticky; left: 0; z-index: 10; min-width: 180px; text-align: left; padding-left: 15px;
             font-weight: 700; background-color: var(--row-bg) !important; color: var(--row-text); border-left: 5px solid var(--row-accent);
+            user-select: none;
         }
 
         .today-highlight-col { background-color: var(--today-highlight) !important; }
@@ -109,7 +117,6 @@
 
         input[type="checkbox"] { width: 22px; height: 22px; accent-color: var(--row-accent); cursor: pointer; transition: 0.2s; }
 
-        /* Monthly Sheet Styling */
         .summary-sheet {
             background: #FFF; border-radius: 20px; border: 2px solid #EEE; margin-top: 15px; overflow: hidden;
             text-align: left;
@@ -120,7 +127,6 @@
         .summary-label { color: #888; font-weight: 600; }
         .summary-value { font-weight: 800; color: #333; }
 
-        /* New Task Log Styles */
         .task-log-container { margin-top: 15px; background: white; border-radius: 20px; border: 2px solid #EEE; overflow: hidden; text-align: left; }
         .task-log-header { background: #F8F9FA; padding: 15px; font-weight: 800; color: var(--primary); border-bottom: 1px solid #EEE; }
         .task-list { padding: 10px 15px; list-style: none; margin: 0; }
@@ -137,6 +143,15 @@
             text-align: center; box-shadow: 0 15px 50px rgba(0,0,0,0.15); animation: zoomIn 0.3s ease-out;
         }
         @keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        /* Correction & Delete Modal Specific */
+        .correction-title { font-size: 18px; font-weight: 800; color: var(--primary); margin-bottom: 20px; letter-spacing: 2px; }
+        .delete-title { color: var(--danger); }
+        .correction-input { width: 100%; padding: 18px; border: 1px solid #F0F0F0; border-radius: 15px; font-size: 16px; font-weight: 600; text-align: center; margin-bottom: 20px; outline: none; background: #FAFAFA; box-sizing: border-box; }
+        .correction-btns { display: flex; gap: 10px; }
+        .cancel-btn { flex: 1; background: #F5F5F5; color: #999; border: none; padding: 16px; border-radius: 15px; font-weight: bold; cursor: pointer; }
+        .save-btn { flex: 1; background: #B8B391; color: white; border: none; padding: 16px; border-radius: 15px; font-weight: bold; cursor: pointer; }
+        .confirm-delete-btn { background: var(--danger); color: white; }
 
         .badge-container { display: flex; flex-direction: column; align-items: center; gap: 8px; }
         .badge-row { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; margin-bottom: 5px; }
@@ -165,7 +180,8 @@
 
         .backup-controls { display: flex; justify-content: center; gap: 15px; margin: 20px 0; }
         .btn-pill { padding: 12px 20px; border-radius: 15px; border: 1px solid #EEE; cursor: pointer; background: #FFF; color: #555; font-weight: 600; }
-        .delete-btn { color: #BBB; border: none; background: none; float: right; cursor: pointer; font-weight: bold; }
+        .delete-btn { color: #BBB; border: none; background: none; float: right; cursor: pointer; font-weight: bold; margin-left: 10px; font-size: 18px; transition: color 0.3s; }
+        .delete-btn:hover { color: var(--danger); }
     </style>
 </head>
 <body>
@@ -262,6 +278,28 @@
     <div style="text-align:center; color:#DDD; font-weight:800; padding:20px;">DEVELOPED BY PRITAM</div>
 </div>
 
+<div id="correctionModal" class="modal">
+    <div class="modal-content">
+        <div class="correction-title">CORRECTION</div>
+        <input type="text" id="editHabitInput" class="correction-input">
+        <div class="correction-btns">
+            <button class="cancel-btn" onclick="closeModal('correctionModal')">Cancel</button>
+            <button class="save-btn" onclick="saveCorrection()">Save</button>
+        </div>
+    </div>
+</div>
+
+<div id="deleteModal" class="modal">
+    <div class="modal-content">
+        <div class="correction-title delete-title">REMOVE HABIT?</div>
+        <p style="font-weight: 600; color: #666; margin-bottom: 25px;">Are you sure you want to delete this habit? All progress will be lost.</p>
+        <div class="correction-btns">
+            <button class="cancel-btn" onclick="closeModal('deleteModal')">Cancel</button>
+            <button class="save-btn confirm-delete-btn" onclick="confirmDelete()">Yes, Remove</button>
+        </div>
+    </div>
+</div>
+
 <div id="exportModal" class="modal"><div class="modal-content">
     <h2>Backup Code 🔑</h2>
     <div class="code-area" id="generatedCode"></div>
@@ -292,6 +330,8 @@
     let notesData = JSON.parse(localStorage.getItem('HabitPro_Notes_Pritam')) || {};
     let myChart;
     let activeNoteDay = null;
+    let habitToEditIdx = null;
+    let habitToDeleteIdx = null; // New tracking variable
 
     window.onload = function() {
         setTimeout(() => {
@@ -356,13 +396,54 @@
 
         habits.forEach((h, hIdx) => {
             const streak = calculateStreak(h.days);
-            let row = `<tr class="habit-row-${hIdx % 5}"><td class="habit-name-cell">${h.name} ${streak > 1 ? `<span class="streak-badge">🔥 ${streak}</span>` : ''}<button class="delete-btn" onclick="deleteHabit(${hIdx})">×</button></td>`;
+            let row = `<tr class="habit-row-${hIdx % 5}" id="row-${hIdx}">
+                <td class="habit-name-cell" ondblclick="openCorrectionModal(${hIdx})">
+                    ${h.name} ${streak > 1 ? `<span class="streak-badge">🔥 ${streak}</span>` : ''}
+                    <button class="delete-btn" onclick="openDeleteModal(${hIdx})">×</button>
+                </td>`;
             for(let d=0; d < new Date(2026, monthsArr.indexOf(currentMonth) + 1, 0).getDate(); d++) {
                 const isTodayCol = (isThisMonth && (d+1) === today) ? 'today-highlight-col' : '';
                 row += `<td class="${isTodayCol}"><input type="checkbox" ${h.days[d]?'checked':''} onclick="toggleDay(${hIdx},${d})"></td>`;
             }
             body.innerHTML += row + `</tr>`;
         });
+    }
+
+    // MODIFIED: Custom Delete Functions
+    function openDeleteModal(idx) {
+        habitToDeleteIdx = idx;
+        document.getElementById('deleteModal').style.display = 'flex';
+    }
+
+    function confirmDelete() {
+        if(habitToDeleteIdx !== null) {
+            const row = document.getElementById(`row-${habitToDeleteIdx}`);
+            if(row) {
+                row.classList.add('habit-removing');
+                setTimeout(() => {
+                    allData[currentMonth].splice(habitToDeleteIdx, 1);
+                    habitToDeleteIdx = null;
+                    closeModal('deleteModal');
+                    updateUI();
+                }, 500); // Wait for animation to finish
+            }
+        }
+    }
+
+    function openCorrectionModal(idx) {
+        habitToEditIdx = idx;
+        const habits = allData[currentMonth] || [];
+        document.getElementById('editHabitInput').value = habits[idx].name;
+        document.getElementById('correctionModal').style.display = 'flex';
+    }
+
+    function saveCorrection() {
+        const newVal = document.getElementById('editHabitInput').value.trim();
+        if(newVal && habitToEditIdx !== null) {
+            allData[currentMonth][habitToEditIdx].name = newVal;
+            updateUI();
+            closeModal('correctionModal');
+        }
     }
 
     function renderTimeline() {
@@ -462,17 +543,15 @@
         const now = new Date();
         const formattedDate = `${now.getDate()} ${monthsArr[now.getMonth()]}`;
         if(!allData[currentMonth]) allData[currentMonth] = []; 
-        // Original Date is saved here
         allData[currentMonth].push({ name: val, days: new Array(31).fill(false), addedOn: formattedDate }); 
         document.getElementById('habitInput').value = ''; 
         updateUI(); 
     }
 
     function toggleDay(hIdx, dIdx) { allData[currentMonth][hIdx].days[dIdx] = !allData[currentMonth][hIdx].days[dIdx]; if(allData[currentMonth][hIdx].days[dIdx]) confetti({ particleCount: 30, spread: 60, origin: { y: 0.8 } }); updateUI(); }
-    function deleteHabit(idx) { if(confirm("Are you sure?")) { allData[currentMonth].splice(idx, 1); updateUI(); } }
+    
     function changeMonth() { currentMonth = document.getElementById('monthSelect').value; updateUI(); }
     
-    // Backup now includes allData (which has addedOn dates) and notesData
     function openExportModal() { 
         const combined = { habits: allData, notes: notesData }; 
         document.getElementById('generatedCode').innerText = btoa(JSON.stringify(combined)); 
@@ -493,7 +572,7 @@
                 allData = restored; 
             } 
             updateUI(); 
-            alert("Success! All data including task dates restored."); 
+            alert("Success! All data restored."); 
             closeModal('restoreModal'); 
         } catch(e) { 
             alert("Invalid code!"); 
