@@ -323,7 +323,7 @@
                 scales: {
                     y: {
                         beginAtZero: true,
-                        max: 100, // Graph always range 100%
+                        max: 100,
                         ticks: { stepSize: 20 }
                     }
                 },
@@ -462,6 +462,7 @@
         const now = new Date();
         const formattedDate = `${now.getDate()} ${monthsArr[now.getMonth()]}`;
         if(!allData[currentMonth]) allData[currentMonth] = []; 
+        // Original Date is saved here
         allData[currentMonth].push({ name: val, days: new Array(31).fill(false), addedOn: formattedDate }); 
         document.getElementById('habitInput').value = ''; 
         updateUI(); 
@@ -470,11 +471,34 @@
     function toggleDay(hIdx, dIdx) { allData[currentMonth][hIdx].days[dIdx] = !allData[currentMonth][hIdx].days[dIdx]; if(allData[currentMonth][hIdx].days[dIdx]) confetti({ particleCount: 30, spread: 60, origin: { y: 0.8 } }); updateUI(); }
     function deleteHabit(idx) { if(confirm("Are you sure?")) { allData[currentMonth].splice(idx, 1); updateUI(); } }
     function changeMonth() { currentMonth = document.getElementById('monthSelect').value; updateUI(); }
-    function openExportModal() { const combined = { habits: allData, notes: notesData }; document.getElementById('generatedCode').innerText = btoa(JSON.stringify(combined)); document.getElementById('exportModal').style.display = 'flex'; }
+    
+    // Backup now includes allData (which has addedOn dates) and notesData
+    function openExportModal() { 
+        const combined = { habits: allData, notes: notesData }; 
+        document.getElementById('generatedCode').innerText = btoa(JSON.stringify(combined)); 
+        document.getElementById('exportModal').style.display = 'flex'; 
+    }
+
     function openRestoreModal() { document.getElementById('restoreInput').value = ''; document.getElementById('restoreModal').style.display = 'flex'; }
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
     function copyCode() { navigator.clipboard.writeText(document.getElementById('generatedCode').innerText).then(() => alert("Copied!")); }
-    function processRestore() { try { const restored = JSON.parse(atob(document.getElementById('restoreInput').value.trim())); if(restored.habits) { allData = restored.habits; notesData = restored.notes || {}; } else { allData = restored; } updateUI(); alert("Success!"); closeModal('restoreModal'); } catch(e) { alert("Invalid code!"); } }
+    
+    function processRestore() { 
+        try { 
+            const restored = JSON.parse(atob(document.getElementById('restoreInput').value.trim())); 
+            if(restored.habits) { 
+                allData = restored.habits; 
+                notesData = restored.notes || {}; 
+            } else { 
+                allData = restored; 
+            } 
+            updateUI(); 
+            alert("Success! All data including task dates restored."); 
+            closeModal('restoreModal'); 
+        } catch(e) { 
+            alert("Invalid code!"); 
+        } 
+    }
 </script>
 </body>
 </html>
