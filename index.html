@@ -15,7 +15,6 @@
             --today-highlight: #FFF9C4; 
             --danger: #FF7675;
             --success: #55EFA1;
-            --check-border: #DFE6E9;
         }
 
         /* Premium Loader */
@@ -49,37 +48,7 @@
             100% { width: 100%; }
         }
 
-        /* Custom Modern Checkbox */
-        .check-container {
-            display: block; position: relative; width: 24px; height: 24px;
-            cursor: pointer; user-select: none; margin: 0 auto;
-        }
-        .check-container input { position: absolute; opacity: 0; cursor: pointer; height: 0; width: 0; }
-        .checkmark {
-            position: absolute; top: 0; left: 0; height: 24px; width: 24px;
-            background-color: #FFF; border: 2px solid var(--check-border);
-            border-radius: 8px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .check-container:hover input ~ .checkmark { border-color: var(--row-accent); }
-        .check-container input:checked ~ .checkmark {
-            background-color: var(--row-accent); border-color: var(--row-accent);
-            transform: scale(1.1); animation: popIn 0.3s;
-        }
-        .checkmark:after {
-            content: ""; position: absolute; display: none;
-            left: 8px; top: 3px; width: 5px; height: 10px;
-            border: solid white; border-width: 0 3px 3px 0;
-            transform: rotate(45deg);
-        }
-        .check-container input:checked ~ .checkmark:after { display: block; }
-        
-        @keyframes popIn {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1.1); }
-        }
-
-        /* Custom Toast Popup Styles */
+        /* NEW: Custom Toast Popup Styles */
         .toast-container {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
             z-index: 10001; display: flex; flex-direction: column; gap: 10px;
@@ -172,6 +141,8 @@
             border-radius: 8px; margin-left: 5px; border: 1px solid #FFCDD2; font-weight: 800;
         }
 
+        input[type="checkbox"] { width: 22px; height: 22px; accent-color: var(--row-accent); cursor: pointer; transition: 0.2s; }
+
         .summary-sheet {
             background: #FFF; border-radius: 20px; border: 2px solid #EEE; margin-top: 15px; overflow: hidden;
             text-align: left;
@@ -237,14 +208,26 @@
         .delete-btn { color: #BBB; border: none; background: none; float: right; cursor: pointer; font-weight: bold; margin-left: 10px; font-size: 18px; transition: color 0.3s; }
         .delete-btn:hover { color: var(--danger); }
         
-        /* Updated Alignment Styles */
-        .input-flex {
-            display: flex; gap: 8px; align-items: center; justify-content: space-between; width: 100%;
-        }
-        #habitInput { flex: 1; padding: 12px; border: 1px solid #EEE; border-radius: 15px; outline: none; min-width: 0; }
-        #ptsInput { width: 65px; padding: 12px; border: 1px solid #EEE; border-radius: 15px; outline: none; text-align: center; font-weight: bold; color: var(--primary); }
-        .add-btn { background: var(--primary); color: white; border: none; padding: 12px 20px; border-radius: 15px; font-weight: bold; flex-shrink: 0; cursor: pointer; }
+        #ptsInput { width: 55px; padding: 12px; border: 1px solid #EEE; border-radius: 15px; outline: none; text-align: center; font-weight: bold; color: var(--primary); }
 
+        /* FIX: Add Habit Input Responsiveness */
+        .add-habit-card {
+            display: flex; gap: 8px; align-items: center;
+        }
+        
+        @media (max-width: 600px) {
+            .add-habit-card {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            #ptsInput {
+                width: 100%;
+                box-sizing: border-box;
+            }
+            .add-habit-card button {
+                padding: 15px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -301,12 +284,10 @@
         </div>
     </div>
 
-    <div class="card animate-in delay-5">
-        <div class="input-flex">
-            <input type="text" id="habitInput" placeholder="New habit...">
-            <input type="number" id="ptsInput" value="1" min="0" max="10" step="0.1" title="Points (0-10)">
-            <button onclick="addHabit()" class="add-btn">+ Add</button>
-        </div>
+    <div class="card animate-in delay-5 add-habit-card">
+        <input type="text" id="habitInput" style="flex:1; padding:12px; border:1px solid #EEE; border-radius:15px; outline:none;" placeholder="New habit...">
+        <input type="number" id="ptsInput" value="1" min="1" max="10" title="Points (1-10)">
+        <button onclick="addHabit()" style="background:var(--primary); color:white; border:none; padding:0 20px; border-radius:15px; font-weight:bold; min-height: 45px;">+ Add</button>
     </div>
 
     <div class="table-wrapper animate-in delay-5">
@@ -350,7 +331,7 @@
     <div class="modal-content">
         <div class="correction-title">CORRECTION</div>
         <input type="text" id="editHabitInput" class="correction-input" placeholder="Habit Name">
-        <input type="number" id="editPtsInput" class="correction-input" placeholder="Points (0-10)" min="0" max="10" step="0.1">
+        <input type="number" id="editPtsInput" class="correction-input" placeholder="Points (1-10)" min="1" max="10">
         <div class="correction-btns">
             <button class="cancel-btn" onclick="closeModal('correctionModal')">Cancel</button>
             <button class="save-btn" onclick="saveCorrection()">Save</button>
@@ -487,12 +468,7 @@
                 </td>`;
             for(let d=0; d < new Date(2026, monthsArr.indexOf(currentMonth) + 1, 0).getDate(); d++) {
                 const isTodayCol = (isThisMonth && (d+1) === today) ? 'today-highlight-col' : '';
-                row += `<td class="${isTodayCol}">
-                    <label class="check-container">
-                        <input type="checkbox" ${h.days[d]?'checked':''} onclick="toggleDay(${hIdx},${d})">
-                        <span class="checkmark"></span>
-                    </label>
-                </td>`;
+                row += `<td class="${isTodayCol}"><input type="checkbox" ${h.days[d]?'checked':''} onclick="toggleDay(${hIdx},${d})"></td>`;
             }
             body.innerHTML += row + `</tr>`;
         });
@@ -529,7 +505,7 @@
 
     function saveCorrection() {
         const newVal = document.getElementById('editHabitInput').value.trim();
-        const newPts = parseFloat(document.getElementById('editPtsInput').value) || 0;
+        const newPts = parseInt(document.getElementById('editPtsInput').value) || 1;
         if(newVal && habitToEditIdx !== null) {
             allData[currentMonth][habitToEditIdx].name = newVal;
             allData[currentMonth][habitToEditIdx].points = newPts;
@@ -591,7 +567,7 @@
             let totalWeight = 0;
             let earnedWeight = 0;
             habits.forEach(h => {
-                const pts = parseFloat(h.points) || 0;
+                const pts = h.points || 1;
                 totalWeight += pts;
                 if(h.days[d]) earnedWeight += pts;
             });
@@ -639,7 +615,7 @@
     
     function addHabit() { 
         const val = document.getElementById('habitInput').value.trim(); 
-        const pts = parseFloat(document.getElementById('ptsInput').value) || 0;
+        const pts = parseInt(document.getElementById('ptsInput').value) || 1;
         if(!val) { showToast("Enter a habit name!", "error"); return; } 
         const now = new Date();
         const formattedDate = `${now.getDate()} ${monthsArr[now.getMonth()]}`;
