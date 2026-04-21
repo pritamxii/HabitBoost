@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Habit Master Pro 2026</title>
+    <title>Habit Master Pro 2026 - Weighted</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
@@ -14,9 +14,10 @@
             --text: #2D3436;
             --today-highlight: #FFF9C4; 
             --danger: #FF7675;
+            --success: #55EFA1;
         }
 
-        /* Improved Premium Loader */
+        /* Premium Loader */
         #loader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #FFFFFF; display: flex; flex-direction: column;
@@ -47,13 +48,37 @@
             100% { width: 100%; }
         }
 
+        /* NEW: Custom Toast Popup Styles */
+        .toast-container {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            z-index: 10001; display: flex; flex-direction: column; gap: 10px;
+            pointer-events: none;
+        }
+        .toast {
+            background: rgba(45, 52, 54, 0.95); color: white; padding: 12px 25px;
+            border-radius: 50px; font-weight: 600; font-size: 14px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); backdrop-filter: blur(5px);
+            display: flex; align-items: center; gap: 10px;
+            animation: toastIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            opacity: 0;
+        }
+        .toast.success { border-left: 4px solid var(--success); }
+        .toast.error { border-left: 4px solid var(--danger); }
+        @keyframes toastIn {
+            from { transform: translateY(100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes toastOut {
+            from { transform: translateY(0); opacity: 1; }
+            to { transform: translateY(20px); opacity: 0; }
+        }
+
         /* Smooth Entrance & Exit Animations */
         @keyframes revealUp {
             from { opacity: 0; transform: translateY(40px) scale(0.98); }
             to { opacity: 1; transform: translateY(0) scale(1); }
         }
 
-        /* NEW: Habit Removal Animation */
         @keyframes slideOutLeft {
             0% { transform: translateX(0); opacity: 1; }
             100% { transform: translateX(-50px); opacity: 0; }
@@ -107,6 +132,7 @@
             font-weight: 700; background-color: var(--row-bg) !important; color: var(--row-text); border-left: 5px solid var(--row-accent);
             user-select: none;
         }
+        .habit-pts-label { font-size: 9px; opacity: 0.6; display: block; margin-top: 2px; }
 
         .today-highlight-col { background-color: var(--today-highlight) !important; }
 
@@ -144,11 +170,10 @@
         }
         @keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 
-        /* Correction & Delete Modal Specific */
         .correction-title { font-size: 18px; font-weight: 800; color: var(--primary); margin-bottom: 20px; letter-spacing: 2px; }
         .delete-title { color: var(--danger); }
-        .correction-input { width: 100%; padding: 18px; border: 1px solid #F0F0F0; border-radius: 15px; font-size: 16px; font-weight: 600; text-align: center; margin-bottom: 20px; outline: none; background: #FAFAFA; box-sizing: border-box; }
-        .correction-btns { display: flex; gap: 10px; }
+        .correction-input { width: 100%; padding: 18px; border: 1px solid #F0F0F0; border-radius: 15px; font-size: 16px; font-weight: 600; text-align: center; margin-bottom: 10px; outline: none; background: #FAFAFA; box-sizing: border-box; }
+        .correction-btns { display: flex; gap: 10px; margin-top: 10px; }
         .cancel-btn { flex: 1; background: #F5F5F5; color: #999; border: none; padding: 16px; border-radius: 15px; font-weight: bold; cursor: pointer; }
         .save-btn { flex: 1; background: #B8B391; color: white; border: none; padding: 16px; border-radius: 15px; font-weight: bold; cursor: pointer; }
         .confirm-delete-btn { background: var(--danger); color: white; }
@@ -182,9 +207,13 @@
         .btn-pill { padding: 12px 20px; border-radius: 15px; border: 1px solid #EEE; cursor: pointer; background: #FFF; color: #555; font-weight: 600; }
         .delete-btn { color: #BBB; border: none; background: none; float: right; cursor: pointer; font-weight: bold; margin-left: 10px; font-size: 18px; transition: color 0.3s; }
         .delete-btn:hover { color: var(--danger); }
+        
+        #ptsInput { width: 55px; padding: 12px; border: 1px solid #EEE; border-radius: 15px; outline: none; text-align: center; font-weight: bold; color: var(--primary); }
     </style>
 </head>
 <body>
+
+<div id="toastContainer" class="toast-container"></div>
 
 <div id="loader">
     <div class="loader-content">
@@ -207,7 +236,7 @@
     </div>
 
     <div class="card animate-in delay-2">
-        <div style="font-weight:bold; color:#888">Today's Progress</div>
+        <div style="font-weight:bold; color:#888">Weighted Progress</div>
         <div class="perc-val" id="todayPercent">0%</div>
         <div id="fullDateDisplay" style="color:#BBB; font-size:14px; font-weight: 600;"></div>
     </div>
@@ -236,8 +265,9 @@
         </div>
     </div>
 
-    <div class="card animate-in delay-5" style="display:flex; gap:10px;">
+    <div class="card animate-in delay-5" style="display:flex; gap:8px;">
         <input type="text" id="habitInput" style="flex:1; padding:12px; border:1px solid #EEE; border-radius:15px; outline:none;" placeholder="New habit...">
+        <input type="number" id="ptsInput" value="1" min="1" max="10" title="Points (1-10)">
         <button onclick="addHabit()" style="background:var(--primary); color:white; border:none; padding:0 20px; border-radius:15px; font-weight:bold;">+ Add</button>
     </div>
 
@@ -281,7 +311,8 @@
 <div id="correctionModal" class="modal">
     <div class="modal-content">
         <div class="correction-title">CORRECTION</div>
-        <input type="text" id="editHabitInput" class="correction-input">
+        <input type="text" id="editHabitInput" class="correction-input" placeholder="Habit Name">
+        <input type="number" id="editPtsInput" class="correction-input" placeholder="Points (1-10)" min="1" max="10">
         <div class="correction-btns">
             <button class="cancel-btn" onclick="closeModal('correctionModal')">Cancel</button>
             <button class="save-btn" onclick="saveCorrection()">Save</button>
@@ -331,7 +362,22 @@
     let myChart;
     let activeNoteDay = null;
     let habitToEditIdx = null;
-    let habitToDeleteIdx = null; // New tracking variable
+    let habitToDeleteIdx = null;
+
+    // NEW: Function to show Premium Toasts
+    function showToast(message, type = 'success') {
+        const container = document.getElementById('toastContainer');
+        const toast = document.createElement('div');
+        toast.className = `toast ${type}`;
+        const icon = type === 'success' ? '✅' : '❌';
+        toast.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
+        container.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.style.animation = 'toastOut 0.5s ease forwards';
+            setTimeout(() => toast.remove(), 500);
+        }, 3000);
+    }
 
     window.onload = function() {
         setTimeout(() => {
@@ -399,6 +445,7 @@
             let row = `<tr class="habit-row-${hIdx % 5}" id="row-${hIdx}">
                 <td class="habit-name-cell" ondblclick="openCorrectionModal(${hIdx})">
                     ${h.name} ${streak > 1 ? `<span class="streak-badge">🔥 ${streak}</span>` : ''}
+                    <span class="habit-pts-label">${h.points || 1} pts</span>
                     <button class="delete-btn" onclick="openDeleteModal(${hIdx})">×</button>
                 </td>`;
             for(let d=0; d < new Date(2026, monthsArr.indexOf(currentMonth) + 1, 0).getDate(); d++) {
@@ -409,7 +456,6 @@
         });
     }
 
-    // MODIFIED: Custom Delete Functions
     function openDeleteModal(idx) {
         habitToDeleteIdx = idx;
         document.getElementById('deleteModal').style.display = 'flex';
@@ -425,7 +471,8 @@
                     habitToDeleteIdx = null;
                     closeModal('deleteModal');
                     updateUI();
-                }, 500); // Wait for animation to finish
+                    showToast("Habit removed!");
+                }, 500);
             }
         }
     }
@@ -434,15 +481,19 @@
         habitToEditIdx = idx;
         const habits = allData[currentMonth] || [];
         document.getElementById('editHabitInput').value = habits[idx].name;
+        document.getElementById('editPtsInput').value = habits[idx].points || 1;
         document.getElementById('correctionModal').style.display = 'flex';
     }
 
     function saveCorrection() {
         const newVal = document.getElementById('editHabitInput').value.trim();
+        const newPts = parseInt(document.getElementById('editPtsInput').value) || 1;
         if(newVal && habitToEditIdx !== null) {
             allData[currentMonth][habitToEditIdx].name = newVal;
+            allData[currentMonth][habitToEditIdx].points = newPts;
             updateUI();
             closeModal('correctionModal');
+            showToast("Changes saved!");
         }
     }
 
@@ -456,7 +507,7 @@
         }
         habits.forEach(h => {
             const dateStr = h.addedOn || "N/A";
-            timeline.innerHTML += `<div class="task-item"><span>${h.name}</span><span class="task-date">(${dateStr})</span></div>`;
+            timeline.innerHTML += `<div class="task-item"><span>${h.name} (${h.points || 1} pts)</span><span class="task-date">(${dateStr})</span></div>`;
         });
     }
 
@@ -495,8 +546,15 @@
         });
 
         for (let d = 0; d < totalDays; d++) {
-            let done = habits.filter(h => h.days[d]).length;
-            let dayPerc = habits.length ? Math.round((done/habits.length)*100) : 0;
+            let totalWeight = 0;
+            let earnedWeight = 0;
+            habits.forEach(h => {
+                const pts = h.points || 1;
+                totalWeight += pts;
+                if(h.days[d]) earnedWeight += pts;
+            });
+            
+            let dayPerc = totalWeight > 0 ? Math.round((earnedWeight/totalWeight)*100) : 0;
             scores.push(dayPerc);
             if(dayPerc > 0) { totalMonthScore += dayPerc; trackedDays++; }
         }
@@ -535,47 +593,45 @@
     }
 
     function openNoteModal(day) { activeNoteDay = day; const key = `${currentMonth}_${day}`; document.getElementById('noteTitle').innerText = `Journal - ${currentMonth} ${day}`; document.getElementById('dayNoteInput').value = notesData[key] || ""; document.getElementById('noteModal').style.display = 'flex'; }
-    function saveDayNote() { const key = `${currentMonth}_${activeNoteDay}`; const val = document.getElementById('dayNoteInput').value.trim(); if(val) notesData[key] = val; else delete notesData[key]; updateUI(); closeModal('noteModal'); }
+    function saveDayNote() { const key = `${currentMonth}_${activeNoteDay}`; const val = document.getElementById('dayNoteInput').value.trim(); if(val) notesData[key] = val; else delete notesData[key]; updateUI(); closeModal('noteModal'); showToast("Journal saved!"); }
     
     function addHabit() { 
         const val = document.getElementById('habitInput').value.trim(); 
-        if(!val) return; 
+        const pts = parseInt(document.getElementById('ptsInput').value) || 1;
+        if(!val) { showToast("Enter a habit name!", "error"); return; } 
         const now = new Date();
         const formattedDate = `${now.getDate()} ${monthsArr[now.getMonth()]}`;
         if(!allData[currentMonth]) allData[currentMonth] = []; 
-        allData[currentMonth].push({ name: val, days: new Array(31).fill(false), addedOn: formattedDate }); 
+        allData[currentMonth].push({ name: val, days: new Array(31).fill(false), addedOn: formattedDate, points: pts }); 
         document.getElementById('habitInput').value = ''; 
+        document.getElementById('ptsInput').value = '1';
         updateUI(); 
+        showToast("New habit added!");
     }
 
     function toggleDay(hIdx, dIdx) { allData[currentMonth][hIdx].days[dIdx] = !allData[currentMonth][hIdx].days[dIdx]; if(allData[currentMonth][hIdx].days[dIdx]) confetti({ particleCount: 30, spread: 60, origin: { y: 0.8 } }); updateUI(); }
-    
     function changeMonth() { currentMonth = document.getElementById('monthSelect').value; updateUI(); }
-    
-    function openExportModal() { 
-        const combined = { habits: allData, notes: notesData }; 
-        document.getElementById('generatedCode').innerText = btoa(JSON.stringify(combined)); 
-        document.getElementById('exportModal').style.display = 'flex'; 
-    }
-
+    function openExportModal() { const combined = { habits: allData, notes: notesData }; document.getElementById('generatedCode').innerText = btoa(JSON.stringify(combined)); document.getElementById('exportModal').style.display = 'flex'; }
     function openRestoreModal() { document.getElementById('restoreInput').value = ''; document.getElementById('restoreModal').style.display = 'flex'; }
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-    function copyCode() { navigator.clipboard.writeText(document.getElementById('generatedCode').innerText).then(() => alert("Copied!")); }
+    
+    function copyCode() { 
+        navigator.clipboard.writeText(document.getElementById('generatedCode').innerText).then(() => {
+            showToast("Backup code copied!");
+        }); 
+    }
     
     function processRestore() { 
         try { 
-            const restored = JSON.parse(atob(document.getElementById('restoreInput').value.trim())); 
-            if(restored.habits) { 
-                allData = restored.habits; 
-                notesData = restored.notes || {}; 
-            } else { 
-                allData = restored; 
-            } 
+            const code = document.getElementById('restoreInput').value.trim();
+            if(!code) { showToast("Paste a code first!", "error"); return; }
+            const restored = JSON.parse(atob(code)); 
+            if(restored.habits) { allData = restored.habits; notesData = restored.notes || {}; } else { allData = restored; } 
             updateUI(); 
-            alert("Success! All data restored."); 
+            showToast("All data restored successfully!"); 
             closeModal('restoreModal'); 
         } catch(e) { 
-            alert("Invalid code!"); 
+            showToast("Invalid backup code!", "error");
         } 
     }
 </script>
