@@ -1,11 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="google-site-verification" content="xY_KkraQlNBsfNLe_EkhV0O27MIPyRuCB36A9KvhYIc" />
-    
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <meta name="google-site-verification" content="xY_KkraQlNBsfNLe_EkhV0O27MIPyRuCB36A9KvhYIc" />
+    
     <title>Habit Master Pro 2026 - Weighted</title>
+    
+    <meta name="description" content="Habit Master Pro 2026 - A premium, weighted habit tracker developed by Pritam Mistry to boost daily productivity.">
+    <meta name="keywords" content="Habit Tracker, TaskBoost, Pritam Mistry, Productivity Tool, Habit Master Pro">
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
@@ -612,7 +617,7 @@
         myChart.data.datasets[0].data = scores; myChart.update();
     }
 
-    function openNoteModal(day) { activeNoteDay = day; const key = `${currentMonth}_${day}`; document.getElementById('noteTitle').innerText = `Journal - ${currentMonth} ${day}`; document.getElementById('dayNoteInput').value = notesData[key] || ""; document.getElementById('noteModal').style.display = 'flex'; }
+    function openNoteModal(day) { activeNoteDay = day; const key = `${currentMonth}_${day}`; document.getElementById('noteTitle').innerText = `Journal - ${currentMonth} ${day}`; document.getElementById('dayNoteInput').value = monthsArr[monthsArr.indexOf(currentMonth)] + " " + day + " notes..."; document.getElementById('dayNoteInput').value = notesData[key] || ""; document.getElementById('noteModal').style.display = 'flex'; }
     function saveDayNote() { const key = `${currentMonth}_${activeNoteDay}`; const val = document.getElementById('dayNoteInput').value.trim(); if(val) notesData[key] = val; else delete notesData[key]; updateUI(); closeModal('noteModal'); showToast("Journal saved!"); }
     
     function addHabit() { 
